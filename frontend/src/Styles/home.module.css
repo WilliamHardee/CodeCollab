@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+.home_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: auto;
+    margin: auto;
+    position: relative;
+    z-index: 1;
+    
+}
+
+
+.button_list {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-evenly;
+}
+
+.button {
+    cursor: pointer;
+    border-style: solid;
+    border-width: 2px;
+    height: 100%;
+    width: 47.5%;
+    padding: 3% 0;
+    text-align: center;
+    position: relative;
+    transition: 0.3s;
+    bottom: 0;
+}
+
+.button:hover {
+    bottom: 5px;
+    box-shadow: 3px 5px black;
+}
+
