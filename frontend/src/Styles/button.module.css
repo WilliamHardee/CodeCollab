@@ -16,3 +16,8 @@
     box-shadow: 3px 5px black;
     background-color: skyblue;
 }
+
+a, a:visited{
+    all:unset;
+
+}

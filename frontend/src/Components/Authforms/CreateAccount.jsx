@@ -1,6 +1,7 @@
 import React from 'react'
 import TitleCard from '../Global/TitleCard'
 import style from '../../Styles/authforms.module.css'
+import { Link } from 'react-router-dom'
 
 function CreateAccount() {
   return (
@@ -19,8 +20,11 @@ function CreateAccount() {
                 <input className={style.input} type="text" id="password-conf" name="password-conf" placeholder='confirm password'/>
             </li>
         </ul>
-        <input className={style.button} type="submit" value="Create Account"/>\
-        <input className={style.button} type="submit" value="Log In"/>
+        <input className={style.button} type="submit" value="Create Account"/>
+        <Link to="/login">
+          <input className={style.button} type="submit" value="Log In"/>
+        </Link>
+
 
         
     </form>

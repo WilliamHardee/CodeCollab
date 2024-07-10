@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { Link } from 'react-router-dom'
+
 import style from '../../Styles/nav.module.css'
 import TitleCard from '../Global/TitleCard'
 
@@ -7,7 +9,9 @@ function Nav() {
   return (
     <nav>
         <ul className={style.nav_bar}>
-            <li className={style.nav_item}><TitleCard/></li>
+          <Link className={style.nav_item} to="/">
+            <li><TitleCard/></li>
+          </Link>
             <li className={style.nav_item}>item</li>
             <li className={style.nav_item}>item</li>
             <li className={style.nav_item}>item</li>

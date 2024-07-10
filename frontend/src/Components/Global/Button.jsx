@@ -1,8 +1,12 @@
+import { Link } from 'react-router-dom'
 import style from '../../Styles/button.module.css'
 
-function Button({text}) {
+function Button({text, customStyle, linkto}) {
   return (
-    <div className={style.button}>{text}</div>
+    <Link to={linkto} className={style.button} style={customStyle}>
+      <div>{text}</div>
+    </Link>
+
   )
 }
 

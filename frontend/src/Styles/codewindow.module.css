@@ -1,0 +1,12 @@
+textarea {
+    position: relative;
+    left: 10vh;
+    width: 50%;
+    height: 50%;
+    
+}
+
+.divider {
+    height: 60px;
+    width: 100%;
+}

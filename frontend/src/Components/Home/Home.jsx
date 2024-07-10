@@ -1,7 +1,9 @@
 import React from 'react'
 import Button from '../Global/Button'
 import TitleCard from '../Global/TitleCard'
+import { Link } from 'react-router-dom'
 import style from '../../Styles/home.module.css'
+
 
 function Home() {
 
@@ -29,8 +31,8 @@ function Home() {
         <div>
             <TitleCard size="4"/>
             <div className={style.button_list}>
-                <Button text="login"/>
-                <Button text="create project"/>
+                <Button linkto="/Login" text="login"/>
+                <Button linkto="/CodeWindow" text="create project"/>
             </div>
         </div>
     </div>
