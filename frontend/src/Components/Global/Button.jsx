@@ -1,4 +1,4 @@
-import style from '../../Styles/home.module.css'
+import style from '../../Styles/button.module.css'
 
 function Button({text}) {
   return (

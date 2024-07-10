@@ -6,12 +6,12 @@ import TitleCard from '../Global/TitleCard'
 function Nav() {
   return (
     <nav>
-        <ul>
-            <li><TitleCard/></li>
-            <li>item</li>
-            <li>item</li>
-            <li>item</li>
-            <li className={style.nav_login}>Login</li>
+        <ul className={style.nav_bar}>
+            <li className={style.nav_item}><TitleCard/></li>
+            <li className={style.nav_item}>item</li>
+            <li className={style.nav_item}>item</li>
+            <li className={style.nav_item}>item</li>
+            <li className={`${style.nav_login} ${style.nav_item}`}>Login</li>
         </ul>
     </nav>
   )

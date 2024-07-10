@@ -1,0 +1,83 @@
+.login {
+   position: relative;
+   width: 20em;
+   top: 30%;
+   margin: 0 auto;
+   height: 25em;
+   border-style: solid;
+   box-shadow: 5px 5px black;
+
+
+}
+
+.create_account {
+    position: relative;
+    width: 20em;
+    top: 30%;
+    margin: 0 auto;
+    height: 30em;
+    border-style: solid;
+    box-shadow: 5px 5px black;
+ 
+ }
+
+ .form_title {
+    text-align: center;
+ }
+
+.form_body {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+
+}
+
+.login h1, .create_account h1{
+    position: relative;
+    margin: 0.5em 1em;
+    font-size: 4rem;
+}
+
+.form_body li {
+    width: 100%;
+}
+
+.input {
+    position: relative;
+    border-color: black;
+    left: 5%;
+    margin-top: 1em;
+    width: 90%;
+    padding: 0.5em 0;
+    border-radius: 5px;
+    font-size: 1.25rem;
+}
+
+.label {
+    font-size: 2rem;
+    
+}
+
+.button {
+    cursor: pointer;
+    border-style: solid;
+    border-width: 2px;
+    margin: 3% 0;
+    height: 4em;
+    width: 90%;
+    padding: 3% 0%;
+    text-align: center;
+    position: relative;
+    transition: 0.3s;
+    bottom: -1em;
+    left: 5%
+}
+
+.button:hover {
+    bottom: -0.5em;
+    box-shadow: 3px 5px black;
+    background-color: skyblue;
+}
