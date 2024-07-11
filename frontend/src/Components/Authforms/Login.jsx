@@ -14,7 +14,6 @@ function Login() {
         </div>
         <ul className={style.form_body}>
             <li>
-
                 <input className={style.input} type="text" id="username" name="username" placeholder='username'/>
             </li>
             <li>
