@@ -13,7 +13,7 @@ import com.collabcode.collabcode.repository.UserRepository;
 @Service
 public class UserService {
 
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8);
     UserRepository UserRepository;
 
     @Autowired
