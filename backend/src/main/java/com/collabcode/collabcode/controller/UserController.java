@@ -1,17 +1,23 @@
 package com.collabcode.collabcode.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collabcode.collabcode.service.UserService;
+
+import jakarta.validation.Valid;
+
 import com.collabcode.collabcode.exceptions.UsernameAlreadyExistsException;
 import com.collabcode.collabcode.model.User;
 
@@ -19,24 +25,34 @@ import com.collabcode.collabcode.model.User;
 @RequestMapping("/user")
 public class UserController {
     
-    UserService UserService;
+    UserService userService;
 
     @Autowired
-    public UserController(UserService UserService) {
-        this.UserService = UserService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(UserService.getAllUsers());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.getAllUsers());
     }
     
-    @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User User) throws Exception {
-        if(UserService.getUserByUsername(User.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistsException("Username already exists");
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody User user) {
+        boolean res = userService.login(user);
+        if(res) {
+            return  ResponseEntity.ok().build();
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserService.save(User));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @PostMapping("")
+    public ResponseEntity createUser(@RequestBody User User) throws Exception {
+        if(userService.getUserByUsername(User.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException("Username already exists");
+        }
+        userService.save(User);
+        return ResponseEntity.ok().build();
     }
 }

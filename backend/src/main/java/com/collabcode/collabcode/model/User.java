@@ -22,13 +22,12 @@ public class User {
 
     @Column(name = "username", unique = true)
     @Size(min = 5, message = "username must be longer than 5 characters")
-    @Size(max = 30, message = "username must be shorted than 30 characters")
+    @Size(max = 30, message = "username must be shorter than 30 characters")
     @NotNull(message = "username cannot be empty")
     private String username;
 
     @Column(name="password")
     @Size(min = 5, message = "password must be longer than 5 characters")
-    @Size(max = 30, message = "password must be shorted than 30 characters")
     @NotNull(message = "password cannot be empty")
     private String password;
 
