@@ -1,6 +1,6 @@
 import React from 'react'
 import TitleCard from '../Global/TitleCard'
-import ErrorMessage from './ErrorMessage'
+import Message from './Message'
 import style from '../../Styles/authforms.module.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -11,6 +11,7 @@ function CreateAccount() {
   const [confpassword, setConfpassword] = useState("")
   const [submittable, setSubmittable] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
+  const [successMsg, setSuccessMsg] = useState("")
 
   useEffect(()=> {
     if(userName.length == 0 && password.length == 0 && confpassword.length == 0) {
@@ -30,7 +31,7 @@ function CreateAccount() {
       setSubmittable(false)
     }
     else if(password.length > 20) {
-      setErrorMsg("Password too short")
+      setErrorMsg("Password too long")
       setSubmittable(false)
     }
     else if(password !== confpassword) {
@@ -44,10 +45,10 @@ function CreateAccount() {
   }, [userName, password, confpassword])
 
 
-  async function handleFormSubmit(e) {
+  function handleFormSubmit(e) {
     e.preventDefault()
     const formData = Object.fromEntries(new FormData(e.target))
-    try {
+
       fetch("http://localhost:8080/user", {
         method: "POST",
         headers: {
@@ -57,12 +58,21 @@ function CreateAccount() {
                               password: formData.password})
         
       })
-      .then((res) => {console.log(res.status)})
-      
-    }
-    catch(e) {
-      console.log(e)
-    }
+      .then((res) => res.json())
+      .then((res) => {
+        if(res.status == 201) {
+          setSuccessMsg("Account Created")
+          setErrorMsg("")
+          e.target.reset()
+        }
+        else {
+          setErrorMsg(res.messages[0])
+        }
+      })
+      .catch((e) => {
+        setErrorMsg("An unexpected error occurred");
+        setSuccessMsg("")
+      })
 
   }
 
@@ -114,7 +124,8 @@ function CreateAccount() {
             </Link>
     
       </form>
-      {!submittable && errorMsg && <ErrorMessage text={errorMsg}/>}
+      {errorMsg && <Message text={errorMsg} error={true}/>}
+      {successMsg && !errorMsg && <Message text={successMsg} error={false}/>}
    
     </div>
   )

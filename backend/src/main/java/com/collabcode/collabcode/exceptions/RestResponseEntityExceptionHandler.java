@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.connector.Response;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,36 +32,47 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<Object> handleUsernameAlreadyExistsException(Exception ex, WebRequest request) {
 
-        Map<String, Object> errorBody = new LinkedHashMap<>();
+        List<String> messages = new ArrayList<>();
 
-        errorBody.put("timestamp", LocalDateTime.now());
-        errorBody.put("error", "Username Conflict");
-        errorBody.put("status", HttpStatus.CONFLICT.value());
-        errorBody.put("message", ex.getMessage());
-        errorBody.put("URI", request.getDescription(false));
-    
+        messages.add(ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody);
+        ErrorResponse response = new ErrorResponse(messages, 409, request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     
     @ExceptionHandler(ConstraintViolationException.class) 
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
-        List<String> violations = new ArrayList<>();
+
+        List<String> messages = new ArrayList<>();
+
         for (ConstraintViolation message: ex.getConstraintViolations()) {
-            violations.add(message.getMessage());
+            messages.add(message.getMessage());
         }
 
-        Map<String, Object> errorBody = new LinkedHashMap<>();
-
-        errorBody.put("timestamp", LocalDateTime.now());
-        errorBody.put("error", "Constraint Violation");
-        errorBody.put("status", HttpStatus.CONFLICT.value());
-        errorBody.put("message", violations);
-        errorBody.put("URI", request.getDescription(false));
-
-        
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorBody);
+        ErrorResponse response = new ErrorResponse(messages, 406, request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
     }
 
+    @ExceptionHandler(InvalidLoginCredentials.class)
+    public ResponseEntity<Object> handleInvalidLoginCreadentials(Exception ex, WebRequest request) {
+        List<String> messages = new ArrayList<>();
+
+        messages.add(ex.getMessage());
+
+        ErrorResponse response = new ErrorResponse(messages, 401, request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @Override
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        List<String> messages = new ArrayList<>();
+
+        for (FieldError message: ex.getFieldErrors()) {
+            messages.add(message.getDefaultMessage());
+        }
+
+        ErrorResponse response = new ErrorResponse(messages, 400, request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
+    }
 }

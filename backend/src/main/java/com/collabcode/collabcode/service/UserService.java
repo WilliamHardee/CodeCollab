@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
 import com.collabcode.collabcode.model.User;
 import com.collabcode.collabcode.repository.UserRepository;
 
@@ -35,13 +36,18 @@ public class UserService {
         return UserRepository.findByUsername(username);
     }
 
-    public boolean login(User loginUser) {
+    public void login(User loginUser) throws InvalidLoginCredentials {
         Optional<User> user = getUserByUsername(loginUser.getUsername());
-        if(user.isPresent()) {
-            return encoder.matches(loginUser.getPassword(), user.get().getPassword());
+        
+        if(!user.isPresent()) {
+            throw new InvalidLoginCredentials("Username or Password is incorrect");
         }
 
-        return false;
+        if(!encoder.matches(loginUser.getPassword(), user.get().getPassword())) {
+            throw new InvalidLoginCredentials("Username or Password is incorrect");
+        }
+
+       
     }
 
 

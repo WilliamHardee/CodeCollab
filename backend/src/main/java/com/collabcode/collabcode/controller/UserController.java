@@ -1,6 +1,7 @@
 package com.collabcode.collabcode.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.collabcode.collabcode.service.UserService;
 
 import jakarta.validation.Valid;
 
+import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
 import com.collabcode.collabcode.exceptions.UsernameAlreadyExistsException;
 import com.collabcode.collabcode.model.User;
 
@@ -40,21 +42,17 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody User user) {
-        boolean res = userService.login(user);
-        if(res) {
-            return  ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    public ResponseEntity login(@Valid @RequestBody User user) throws InvalidLoginCredentials {
+        userService.login(user);
+        return ResponseEntity.ok().body(Map.of("status", 200));
     }
 
     @PostMapping("")
-    public ResponseEntity createUser(@RequestBody User User) throws Exception {
+    public ResponseEntity createUser(@Valid @RequestBody User User) throws Exception {
         if(userService.getUserByUsername(User.getUsername()).isPresent()) {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
         userService.save(User);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(Map.of("status", 201));
     }
 }
