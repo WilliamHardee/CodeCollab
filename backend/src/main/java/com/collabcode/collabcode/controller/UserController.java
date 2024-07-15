@@ -53,6 +53,8 @@ public class UserController {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
         userService.save(User);
-        return ResponseEntity.ok().body(Map.of("status", 201));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201));
     }
+
+    
 }

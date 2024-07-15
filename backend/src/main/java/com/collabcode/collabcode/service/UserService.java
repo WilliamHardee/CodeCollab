@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
+import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
 import com.collabcode.collabcode.repository.UserRepository;
 
@@ -48,6 +49,10 @@ public class UserService {
         }
 
        
+    }
+
+    public void addProject(User user, Project project) {
+        user.addProject(project);
     }
 
 
