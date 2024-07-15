@@ -55,5 +55,9 @@ public class UserService {
         user.addProject(project);
     }
 
+    public Optional<User> getIdByUsername(String username) {
+        return UserRepository.getUserByUsername(username);
+    }
+
 
 }

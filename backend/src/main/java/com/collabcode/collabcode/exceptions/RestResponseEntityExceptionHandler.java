@@ -75,4 +75,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ErrorResponse response = new ErrorResponse(messages, 400, request.getDescription(false));
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
     }
+
+    @ExceptionHandler({UserDoesNotExist.class, ProjectDoesNotExist.class})
+    public ResponseEntity<Object> handleNotFoundExeptions(Exception ex, WebRequest request) {
+
+        List<String> messages = new ArrayList<>();
+
+        messages.add(ex.getMessage());
+
+        ErrorResponse response = new ErrorResponse(messages, 404, request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }

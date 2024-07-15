@@ -3,6 +3,9 @@ package com.collabcode.collabcode.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
+import javax.swing.text.html.Option;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,18 +13,24 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.collabcode.collabcode.service.ProjectService;
 import com.collabcode.collabcode.service.UserService;
 
 import jakarta.validation.Valid;
 
 import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
+import com.collabcode.collabcode.exceptions.ProjectDoesNotExist;
+import com.collabcode.collabcode.exceptions.UserDoesNotExist;
 import com.collabcode.collabcode.exceptions.UsernameAlreadyExistsException;
+import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
 
 @RestController
@@ -30,10 +39,12 @@ import com.collabcode.collabcode.model.User;
 public class UserController {
     
     UserService userService;
+    ProjectService projectService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ProjectService projectService) {
         this.userService = userService;
+        this.projectService = projectService;
     }
 
     @GetMapping("")
@@ -56,5 +67,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201));
     }
 
-    
+    @PutMapping("/addProject/{user_name}/{project_id}")
+    public ResponseEntity addProject(@PathVariable("user_name") String user_name, @PathVariable("project_id") UUID project_id) throws Exception {
+        Optional<User> optionalUser = userService.getUserByUsername(user_name);
+        Optional<Project> project = projectService.findById(project_id);
+
+        optionalUser.orElseThrow(() -> new UserDoesNotExist("User: " + user_name + " does not exist"));
+        project.orElseThrow(() -> new ProjectDoesNotExist("Project with id: " + project_id + " does not exist"));
+      
+        User user = optionalUser.get();
+
+        user.addProject(project.get());
+        userService.save(user);
+        
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", 200));
+    }
+
 }

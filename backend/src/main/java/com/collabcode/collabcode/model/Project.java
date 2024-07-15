@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +33,7 @@ public class Project {
     @NotNull(message = "project must have a language")
     private String language;
 
+    @JsonBackReference
     @ManyToMany(mappedBy = "projects")
     Set<User> users = new HashSet<>();
 
