@@ -5,6 +5,7 @@ import CodeWindow from './Components/CodeWindow/CodeWindow'
 import CreateAccount from './Components/Authforms/CreateAccount'
 import {Routes, Route} from 'react-router-dom'
 import './App.css'
+import ProjectList from './Components/ProjectList/ProjectList'
 
 function App() {
 
@@ -15,7 +16,8 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/Login" element={<Login/>}/>
         <Route path="/CreateAccount" element={<CreateAccount/>}/>
-        <Route path="/CodeWindow" element={<CodeWindow/>}/>
+        <Route path="/CodeWindow/:id" element={<CodeWindow/>}/>
+        <Route path="/ProjectList" element={<ProjectList/>}/>
       </Routes>
     </>
   )

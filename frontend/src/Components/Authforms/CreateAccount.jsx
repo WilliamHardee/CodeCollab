@@ -119,9 +119,9 @@ function CreateAccount() {
             <input type="submit" value="Create Account"/>
           </div>
 
-            <Link to="/Login">
-              <div className={`${style.button} ${style.submittable}`}>Login</div>
-            </Link>
+          <Link to="/Login">
+            <div className={`${style.button} ${style.submittable}`}>Login</div>
+          </Link>
     
       </form>
       {errorMsg && <Message text={errorMsg} error={true}/>}

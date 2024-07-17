@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import style from '../../Styles/authforms.module.css'
 import TitleCard from '../Global/TitleCard'
 import Message from './Message'
+import session from '../../Session'
 import { redirect, useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
 
@@ -25,12 +26,17 @@ function Login() {
     .then((res) => res.json())
     .then((res) => {
       if(res.status == 200) {
-        navigate("/CodeWindow")
+        session.setSession("username", formData.username)
+        navigate("/ProjectList")
       }
       else {
         e.target.reset()
         setErrorMsg(res.messages[0])
       }
+    })
+    .catch((err) => {
+      console.log(err)
+      errorMsg("Unexpected error occured please try again")
     })
   }
   
@@ -59,12 +65,12 @@ function Login() {
             </li>
         </ul>
         <div className={`${style.button} ${style.submittable}`}>
-            <input type="submit" value="Log In"/>
-          </div>
+          <input type="submit" value="Log In"/>
+        </div>
 
-            <Link to="/CreateAccount">
-              <div className={`${style.button} ${style.submittable}`}>Create Account</div>
-            </Link>
+        <Link to="/CreateAccount">
+            <div className={`${style.button} ${style.submittable}`}>Create Account</div>
+          </Link>
     
       </form>
       {errorMsg && <Message text={errorMsg} error={true}/>}
