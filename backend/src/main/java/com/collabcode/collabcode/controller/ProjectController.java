@@ -37,7 +37,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity findProjectByUsername(@PathVariable("username") String username) {
+    public ResponseEntity findProjectsByUsername(@PathVariable("username") String username) {
         Optional<List<Project>> projects = projectService.findProjectsByUsername(username);
         
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", 200, "projects", projects.get()));
