@@ -1,3 +1,4 @@
+window.global ||= window
 
 const session = {
     setSession(field, val) {

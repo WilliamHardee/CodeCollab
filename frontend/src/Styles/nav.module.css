@@ -21,7 +21,7 @@
     border-width: 2px;
     list-style: none;
     background-color: white;
-    position: fixed;
+    position: sticky;
     z-index: 2;
 }
 
