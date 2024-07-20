@@ -1,12 +1,16 @@
-import { Link } from 'react-router-dom'
 import style from '../../Styles/button.module.css'
 
-function Button({text, customStyle, linkto}) {
-  return (
-    <Link to={linkto} className={style.button} style={customStyle}>
-      <div>{text}</div>
-    </Link>
+function Button({text, onClick, clickable, isSubmit}) {
 
+  return (
+    <button 
+      type={isSubmit ? "submit" : "button"} 
+      className={`${style.button} ${clickable ? style.valid : style.invalid}`} 
+      onClick={clickable && !isSubmit ? onClick : null} 
+      disabled={!clickable}
+    >
+      {text}
+    </button>
   )
 }
 

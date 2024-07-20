@@ -4,6 +4,7 @@ import session from '../../Session'
 import { useNavigate } from 'react-router'
 import ProjectCard from './ProjectCard'
 import style from '../../Styles/projectList.module.css'
+import Button from '../Global/Button'
 
 function ProjectList() {
   const [projects, setProjects] = useState([])
@@ -29,11 +30,17 @@ function ProjectList() {
   }
 
   return (
-    <div className={style.project_list_container}>
-      {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} onRemove={onRemove}/>
-      ))}
+    <div className={style.container}>
+      <h1>Select a Project</h1>
+      <div className={style.project_list_container}>
+        {projects.map((project) => (
+            <ProjectCard key={project.id} project={project} onRemove={onRemove}/>
+        ))}
+        <Button text="Create Project" clickable={true} />
+      </div>
     </div>
+
+ 
   )
 }
 

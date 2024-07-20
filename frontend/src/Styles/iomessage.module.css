@@ -1,0 +1,27 @@
+.ioMessage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 25rem;
+    height: 4rem;
+    border-radius: 5px;
+    position: relative;
+    transition: 1s;
+    z-index: 10;
+    
+}
+
+.error {
+    background-color: rgb(235, 49, 49);
+    bottom: 0;
+}
+
+.success {
+    background-color: rgb(64, 64, 255);
+    bottom: 0rem;
+}
+
+.up {
+  bottom: 10rem;
+}

@@ -6,14 +6,14 @@ import CreateAccount from './Components/Authforms/CreateAccount'
 import {Routes, Route} from 'react-router-dom'
 import './App.css'
 import ProjectList from './Components/ProjectList/ProjectList'
+import LandingPage from './Components/Home/LandingPage'
 
 function App() {
 
   return (
     <>
-      <Nav/>
       <Routes>
-        <Route path="/" element={<Home/>}/>
+        <Route path="/" element={<LandingPage/>}/>
         <Route path="/Login" element={<Login/>}/>
         <Route path="/CreateAccount" element={<CreateAccount/>}/>
         <Route path="/CodeWindow/:id" element={<CodeWindow/>}/>
