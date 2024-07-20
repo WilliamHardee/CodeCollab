@@ -1,4 +1,4 @@
-import Home from './Components/Home/Home'
+
 import Nav from './Components/Nav/Nav'
 import Login from './Components/Authforms/Login'
 import CodeWindow from './Components/CodeWindow/CodeWindow'

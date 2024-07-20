@@ -9,7 +9,11 @@
     justify-content: space-evenly;
     margin: 2rem 0;
     position: relative;
+    top: 2em;
     z-index: 20;
+    border-color: rgb(54, 54, 54);
+    border-style: solid;
+
 }
 
 .form_title {
