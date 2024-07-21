@@ -23,9 +23,13 @@ public class UserService {
         this.UserRepository = UserRepository;
     }
 
-    public User save(User newUser) {
+    public User create(User newUser) {
         String encrpytedPassword = encoder.encode(newUser.getPassword());
         newUser.setPassword(encrpytedPassword);
+        return UserRepository.save(newUser);
+    }
+
+    public User save(User newUser) {
         return UserRepository.save(newUser);
     }
 
@@ -45,15 +49,20 @@ public class UserService {
         }
 
         if(!encoder.matches(loginUser.getPassword(), user.get().getPassword())) {
+
             throw new InvalidLoginCredentials("Username or Password is incorrect");
         }
 
        
     }
 
+    
+
     public void addProject(User user, Project project) {
         user.addProject(project);
+        UserRepository.save(user);
     }
+
 
     public Optional<User> getIdByUsername(String username) {
         return UserRepository.getUserByUsername(username);

@@ -53,4 +53,20 @@ public class ProjectService {
         }
         return projectRepository.getProjectsById(user.get().getId());
     }
+
+    public void deleteById(UUID id) {
+        projectRepository.deleteAllById(Collections.singleton(id));
+    }
+
+    public void removeUser(Project project, User user) {
+        project.getUsers().remove(user);
+        user.getProjects().remove(project);
+
+        if(project.getUsers().isEmpty()) {
+            projectRepository.delete(project);
+        }
+        else {
+            projectRepository.save(project);
+        }
+    }
 }

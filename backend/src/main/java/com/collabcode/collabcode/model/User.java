@@ -45,7 +45,7 @@ public class User {
     @NotNull(message = "password cannot be empty")
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_to_projects", 
         joinColumns = @JoinColumn(name="user_id"),
         inverseJoinColumns = @JoinColumn(name = "project_id"))
@@ -75,6 +75,11 @@ public class User {
     public void addProject(Project project) {
         this.projects.add(project);
         project.getUsers().add(this);
+    }
+
+    public void removeProject(Project project) {
+        this.projects.remove(project);
+        project.getUsers().remove(this);
     }
 
     public Integer getId() {

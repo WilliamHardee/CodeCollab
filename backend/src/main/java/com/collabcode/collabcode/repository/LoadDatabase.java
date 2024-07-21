@@ -28,14 +28,12 @@ public class LoadDatabase implements CommandLineRunner{
         Project testProject1 = new Project("test1", "print(hi)", "Python");
         Project testProject2 = new Project("test2", "print(bye)", "Python");
 
-        projectService.save(testProject1);
-        projectService.save(testProject2);
-
         userService.addProject(testUser1, testProject1);
         userService.addProject(testUser1, testProject2);
         userService.addProject(testUser2, testProject2);
 
-        userService.save(testUser1);
-        userService.save(testUser2);
+        userService.create(testUser1);
+        userService.create(testUser2);
+
     }
 }
