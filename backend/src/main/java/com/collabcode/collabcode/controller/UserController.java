@@ -8,8 +8,10 @@ import java.util.UUID;
 import javax.swing.text.html.Option;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,7 @@ import com.collabcode.collabcode.service.JwtService;
 import com.collabcode.collabcode.service.ProjectService;
 import com.collabcode.collabcode.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
@@ -43,11 +46,7 @@ import com.collabcode.collabcode.model.User;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtService jwtService;
+    
     
     UserService userService;
     ProjectService projectService;
@@ -64,17 +63,16 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody User user) throws InvalidLoginCredentials {
-        String jwt = null;
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if(authentication.isAuthenticated()) {
-            jwt = jwtService.GenerateToken(user.getUsername());
-        }
-        else {
-            throw new InvalidLoginCredentials("Username or password is incorrect");
-        }
-
-        return ResponseEntity.ok().body(Map.of("status", 200, "token", jwt));
+    public ResponseEntity login(@Valid @RequestBody User user, HttpServletResponse response) throws InvalidLoginCredentials {
+        String jwt = userService.login(user);
+        ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
+        .httpOnly(true)
+        .secure(false)
+        .path("/")
+        .maxAge(3600)
+        .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().body(Map.of("status", 200));
     }
 
     @PostMapping("/create")

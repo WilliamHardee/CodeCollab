@@ -21,7 +21,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 
@@ -87,5 +87,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<Object> handleJwtAuthenticationException(JwtAuthenticationException ex, WebRequest request) {
+        List<String> messages = new ArrayList<>();
+        messages.add(ex.getMessage());
+        ErrorResponse response = new ErrorResponse(messages, HttpStatus.UNAUTHORIZED.value(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+    
    
 }

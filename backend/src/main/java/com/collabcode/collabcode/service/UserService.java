@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,12 @@ import com.collabcode.collabcode.repository.UserRepository;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtService jwtService;
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8);
     UserRepository UserRepository;
@@ -33,7 +42,7 @@ public class UserService {
         return UserRepository.save(newUser);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return UserRepository.findAll();
     }
 
@@ -41,32 +50,29 @@ public class UserService {
         return UserRepository.findByUsername(username);
     }
 
-    public void login(User loginUser) throws InvalidLoginCredentials {
-        Optional<User> user = getUserByUsername(loginUser.getUsername());
-        
-        if(!user.isPresent()) {
-            throw new InvalidLoginCredentials("Username or Password is incorrect");
+    public String login(User user) throws InvalidLoginCredentials {
+        String jwt = null;
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+            if (authentication.isAuthenticated()) {
+                jwt = jwtService.GenerateToken(user.getUsername());
+            }
+        } catch (Exception e) {
+            throw new InvalidLoginCredentials("Username or password is incorrect");
+
         }
+        return jwt;
 
-        if(!encoder.matches(loginUser.getPassword(), user.get().getPassword())) {
-
-            throw new InvalidLoginCredentials("Username or Password is incorrect");
-        }
-
-       
     }
-
-    
 
     public void addProject(User user, Project project) {
         user.addProject(project);
         UserRepository.save(user);
     }
 
-
     public Optional<User> getIdByUsername(String username) {
         return UserRepository.getUserByUsername(username);
     }
-
 
 }
