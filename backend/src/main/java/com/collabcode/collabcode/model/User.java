@@ -51,6 +51,9 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "project_id"))
     Set<Project> projects = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<UserRole> roles = new HashSet<>();
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -96,6 +99,10 @@ public class User {
 
     public Set<Project> getProjects() {
         return this.projects;
+    }
+
+    public Set<UserRole> getRoles() {
+        return this.roles;
     }
 
     
