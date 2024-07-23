@@ -36,6 +36,7 @@ function Login({ setForm, setFormStatus }) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         username: formData.username,
         password: formData.password,

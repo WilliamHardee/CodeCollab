@@ -25,10 +25,12 @@ function ProjectList() {
   function getProjects() {
     const username = session.getSession("username");
     if (!username) {
-      navigate("/Login");
+      navigate("/");
     }
 
-    fetch(`http://localhost:8080/project/${username}`)
+    fetch(`http://localhost:8080/project/${username}`,
+      {credentials: "include"}
+    )
       .then((res) => res.json())
       .then((res) => {
         setProjects(res.projects);
@@ -62,7 +64,9 @@ function ProjectList() {
         `http://localhost:8080/user/deleteProject/${session.getSession(
           "username"
         )}/${projectId}`,
-        { method: "DELETE" }
+        { method: "DELETE" ,
+          credentials: "include"
+        }
       )
         .catch((err) => console.log("unexpected error occured" + err));
     }, 300));
