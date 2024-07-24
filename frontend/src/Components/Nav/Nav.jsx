@@ -1,11 +1,12 @@
 import React from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import style from '../../Styles/nav.module.css'
 import TitleCard from '../Global/TitleCard'
 
 function Nav() {
+
   return (
     <nav>
         <ul className={style.nav_bar}>

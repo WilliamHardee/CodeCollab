@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.collabcode.collabcode.exceptions.ProjectDoesNotExist;
 import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
 import com.collabcode.collabcode.repository.ProjectRepository;
@@ -29,12 +30,12 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Optional<Project> findById(UUID id) {
+    public Optional<Project> findById(UUID id) throws ProjectDoesNotExist{
         Optional<Project> projectOpt;
         List<Project> project =  projectRepository.findAllById(Collections.singleton(id));
 
         if(project.size() == 0) {
-            projectOpt = Optional.empty();
+            throw new ProjectDoesNotExist("Project with ID: " + id + " does not exist");
         }
         else {
             projectOpt = Optional.of(project.get(0));
@@ -68,5 +69,16 @@ public class ProjectService {
         else {
             projectRepository.save(project);
         }
+    }
+
+    public void saveProject(UUID id, String data) throws ProjectDoesNotExist {
+        Optional<Project> projectOpt = projectRepository.findById(id);
+        projectOpt.orElseThrow(() -> new ProjectDoesNotExist("Project with ID: " + id + " does not exist"));
+        
+        Project project = projectOpt.get();
+        project.setProjectData(data);
+        projectRepository.save(project);
+        
+        
     }
 }

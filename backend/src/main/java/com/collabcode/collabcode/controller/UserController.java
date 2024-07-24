@@ -61,7 +61,21 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.getAllUsers());
     }
-    
+
+    @PostMapping("/logout")
+    public ResponseEntity logout(HttpServletResponse response) throws InvalidLoginCredentials {
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+            .httpOnly(true)  // or false if you need JavaScript access
+            .secure(false)
+            .path("/")
+            .maxAge(0)
+            .sameSite("Lax")
+            .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().body(Map.of("status", 200));
+    }
+
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody User user, HttpServletResponse response) throws InvalidLoginCredentials {
         String jwt = userService.login(user);

@@ -14,8 +14,6 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LandingPage/>}/>
-        <Route path="/Login" element={<Login/>}/>
-        <Route path="/CreateAccount" element={<CreateAccount/>}/>
         <Route path="/CodeWindow/:id" element={<CodeWindow/>}/>
         <Route path="/ProjectList" element={<ProjectList/>}/>
       </Routes>
