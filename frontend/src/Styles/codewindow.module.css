@@ -9,7 +9,7 @@
 }
 
 .editorContainer {
-    height: calc(100% - 70px);
+    height: 100%;
     width: 50%;
     overflow-y: scroll;
     background-color: rgb(26,27,38);
@@ -30,4 +30,17 @@
 .nav > h1 {
     margin: 0 20px;
     cursor: pointer;
+}
+
+iframe {
+    width: 50%;
+    height:100%;
+    background-color: black;
+}
+
+.ide {
+    
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
 }

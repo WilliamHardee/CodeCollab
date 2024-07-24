@@ -3,7 +3,7 @@ import style from "../../Styles/codewindow.module.css";
 import Button from "../Global/Button";
 import { useNavigate } from "react-router";
 
-const CodeNavbar = ({ projectId, updates }) => {
+const CodeNavbar = ({ projectId, updates, onRun }) => {
   const navigate = useNavigate();
 
   function logout() {
@@ -16,7 +16,7 @@ const CodeNavbar = ({ projectId, updates }) => {
     <div className={style.nav}>
       <h1 onClick={() => navigate("/projectList")}>Project List</h1>
       <div className={style.navItem}>
-        <Button text="Run" clickable={true} />
+        <Button text="Run" clickable={true} onClick={onRun}/>
       </div>
       <div className={style.navItem}>
         <Button text="Invite" clickable={true} />
