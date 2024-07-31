@@ -1,21 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import style from "../../Styles/codewindow.module.css";
 import { useParams } from "react-router-dom";
-import { Stomp, Client } from "@stomp/stompjs";
-import SockJs from "sockjs-client";
-import session from "../../Session";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
-import { javascript } from "@codemirror/lang-javascript";
-import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
-import {EditorState} from "@codemirror/state"
-import {EditorView, keymap} from "@codemirror/view"
-import {defaultKeymap} from "@codemirror/commands"
-import {basicSetup} from 'codemirror'
-import {coolGlow} from 'thememirror'
-import {yCollab} from 'y-codemirror.next'
+import { EditorState } from "@codemirror/state";
+import { EditorView, keymap } from "@codemirror/view";
+import { defaultKeymap } from "@codemirror/commands";
+import { basicSetup } from "codemirror";
+import { coolGlow } from "thememirror";
+import { yCollab } from "y-codemirror.next";
+import { languageIconsMap } from "../../Data";
 
 function CodeWindow() {
   const { id } = useParams();
@@ -26,26 +22,44 @@ function CodeWindow() {
   const [webContainerInstance, setWebContainerInstance] = useState(null);
   const initializationAttempted = useRef(false);
   const iframeRef = useRef(null);
-  const codeMirrorRef = useRef(null)
-  const ydocRef = useRef(null)
+
+  const ydocRef = useRef(null);
   const providerRef = useRef(null);
-  const viewRef = useRef(null);
+
 
   async function run() {
+    if(!webContainerInstance) {
+      return
+    }
+    const data = languageIconsMap[project.language];
+    console.log(data);
+
+    
+    const fileName = "Main" + data.extension
+    const outputFileName = "Main"
     const files = {
-      "main.py": {
+      [fileName]: {
         file: {
           contents: code,
         },
       },
     };
 
-    await webContainerInstance.mount(files);
-    const main = await webContainerInstance.fs.readFile("main.py", "utf-8");
-    console.log(main);
-    await webContainerInstance.spawn("apt-get", ["install", "python3.6"]);
-    const process = await webContainerInstance.spawn("python3", ["main.py"]);
+    data.install.forEach(async (ins) => {
+      const array = ins.split(" ");
+      await webContainerInstance.spawn(array[0], [...array.slice(1)]);
+    });
 
+    if(data.compile) {
+      const compileCommand = data.compile[0];
+      const compileArgs = [...data.compile.slice(1), fileName, outputFileName];
+      await webContainerInstance.spawn(compileCommand, compileArgs);
+    }
+
+    const runArgs = data.compile ? [outputFileName] : [fileName];
+    await webContainerInstance.mount(files);
+    const process = await webContainerInstance.spawn(data.run[0], [...data.run.slice(1),...runArgs]);
+  
     let result = "";
     process.output.pipeTo(
       new WritableStream({
@@ -105,40 +119,57 @@ function CodeWindow() {
   }, [code]);
 
   useEffect(() => {
-    
-    if(!ydocRef.current) {
+    if (!ydocRef.current) {
       ydocRef.current = new Y.Doc();
     }
 
-    if(!providerRef.current) {
-      providerRef.current = new WebrtcProvider('codemirror6demo', ydocRef.current)
+    if (!providerRef.current) {
+      providerRef.current = new WebrtcProvider(
+        "codemirror6demo",
+        ydocRef.current
+      );
     }
 
-    const ytext = ydocRef.current.getText("codemirror")
+    const ytext = ydocRef.current.getText("codemirror");
 
     let startState = EditorState.create({
       doc: code,
-      extensions: [basicSetup, coolGlow, yCollab(ytext, providerRef.current.awareness)],
-    })
-    console.log(providerRef.current.awareness)
+      extensions: [
+        basicSetup,
+        coolGlow,
+        yCollab(ytext, providerRef.current.awareness),
+
+      ],
+    });
+    console.log(providerRef.current.awareness);
     let view = new EditorView({
       state: startState,
-      parent: document.querySelector("#editorContainer")
-    })
-    providerRef.current.on('synced', (isSynced) => {
-      console.log('Synced:', isSynced);
+      parent: document.querySelector("#editorContainer"),
+      dispatch: (tr) => {
+        view.update([tr]);
+        if (tr.docChanged) {
+          setCode(view.state.doc.toString());
+        }
+      },
+    }, []);
+
+    
+
+    providerRef.current.on("synced", (isSynced) => {
+      console.log("Synced:", isSynced);
     });
 
     ytext.observe(() => {
-      console.log('Document updated:', ytext.toString());
+      console.log("Document updated:", ytext.toString());
     });
 
-    return() => {
-      view.destroy()
-      providerRef.current.destroy()
-      ydocRef.current.destroy()
-    }
-  })
+    return () => {
+      view.destroy();
+      providerRef.current.destroy();
+      ydocRef.current.destroy();
+    };
+  });
+  
   useEffect(() => {
     async function bootWebContainer() {
       if (!initializationAttempted.current) {
@@ -151,24 +182,29 @@ function CodeWindow() {
         }
       }
     }
+  
 
     if (iframeRef.current) {
-      iframeRef.current.srcdoc = `<html><body style=${"color:white; font-size: 2rem;"}><code></code></body></html>`;
+      iframeRef.current.srcdoc = `<html><body style="color:white; font-size: 1rem;"><code></code></body></html>`;
     }
+  
 
     getProjectDetails();
     bootWebContainer();
-  }, []);
-
   
 
+    return () => {
+      if (webContainerInstance) {
+        webContainerInstance.teardown()
+      }
+    };
+  }, [webContainerInstance]); 
 
   return (
     <>
       <CodeNavbar onRun={run} />
       <div className={style.ide}>
-        <div id="editorContainer" className={style.editorContainer}>
-        </div>
+        <div id="editorContainer" className={style.editorContainer}></div>
 
         <iframe ref={iframeRef} titel="output"></iframe>
       </div>

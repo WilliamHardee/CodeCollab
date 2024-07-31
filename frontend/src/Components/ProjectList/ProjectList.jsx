@@ -35,6 +35,7 @@ function ProjectList() {
       .then((res) => {
         setProjects(res.projects);
         console.log("fetching");
+        console.log(res.projects)
       })
       .catch((err) => console.log("An unexpected error happened: " + err));
   }

@@ -66,84 +66,78 @@ export const languageIcons = [
 export const languageIconsMap = {
     Python: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
-        install: "apt-get install python3",
-        run: "python3 "
+        install: ["apt-get install python3"],
+        run: ["python3"],
+        extension: ".py"
     },
     Cpp: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
-        install: "apt-get install g++",
-        compile: "g++ filename.cpp -o ",
-        run: "./"
+        install: ["apt-get install g++"],
+        compile: ["g++ Main.cpp -o"],
+        run: ["./"],
+        extension: ".cpp"
     },
     Java: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg",
-        install: "apt-get install default-jdk",
-        compile: "javac ",
-        run: "java "
+        install: ["apt-get install default-jdk"],
+        compile: ["javac"],
+        run: ["java"],
+        extension: ".java"
     },
     Javascript: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
-        install: "apt-get install nodejs",
-        run: "node "
+        install: ["apt-get install nodejs"],
+        run: ["node"],
+        extension: ".js"
     },
     Ruby: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg",
-        install: "apt-get install ruby",
-        run: "ruby "
+        install: ["apt-get install ruby"],
+        run: ["ruby"],
+        extension: ".rb"
     },
     Php: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg",
-        install: "apt-get install php",
-        run: "php "
+        install: ["apt-get install php"],
+        run: ["php"],
+        extension: ".php"
     },
     Go: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg",
-        install: "apt-get install golang",
-        run: "go run " 
-    },
-    Typescript: {
-        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
-        install: [
-            "apt-get install nodejs",
-            "npm install -g typescript"
-        ],
-        compile: "tsc ",
-        run: "node "  
-    },
-    Kotlin: {
-        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg",
-        install: [
-            "curl -s https://get.sdkman.io | bash",
-            "sdk install kotlin"
-        ],
-        compile: "kotlinc filename.kt -include-runtime -d ",
-        run: "java -jar "
+        install: ["apt-get install golang"],
+        run: ["go run"],
+        extension: ".go"
     },
     Csharp: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg",
-        install: "apt-get install dotnet-sdk-6.0",
-        compile: "dotnet build filename.csproj",
-        run: "dotnet run --project "
+        install: ["apt-get install dotnet-sdk-6.0"],
+        compile: ["dotnet build filename.csproj"],
+        run: ["dotnet run --project "],
+        extension: ".cs"
     },
     Scala: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scala/scala-original.svg",
         install: [
-            "curl -s https://get.sdkman.io | bash",
+            "curl -s https://get.sdkman.io",
+            "bash",
             "sdk install scala"
         ],
-        compile: "scalac filename.scala",
-        run: "scala "
+        compile: ["scalac"],
+        run: ["scala"],
+        extension: ".scala"
     },
     Perl: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/perl/perl-original.svg",
-        install: "apt-get install perl",
-        run: "perl"
+        install: ["apt-get install perl"],
+        run: ["perl"],
+        extension:".pl"
     },
- 
     Haskell: {
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/haskell/haskell-original.svg",
-        install: "apt-get install ghc",
-        compile: "ghc filename.hs",
-        run: "./"  // After compiling
+        install: ["apt-get install ghc"],
+        compile: ["ghc"],
+        run: ["./"],  // After compiling
+        extension: ".hs"
     }
 };
+

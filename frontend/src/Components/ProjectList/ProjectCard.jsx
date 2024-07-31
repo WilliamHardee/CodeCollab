@@ -5,12 +5,6 @@ import { languageIconsMap } from "../../Data";
 
 function ProjectCard({ index, project, onDelete }) {
   const navigate = useNavigate();
-  const [icon, setIcon] = useState("");
-
-  useEffect(() => {
-    setIcon(languageIconsMap[project.language].icon);
-  }, []);
-
   return (
 
     <div
@@ -18,7 +12,7 @@ function ProjectCard({ index, project, onDelete }) {
       onClick={() => navigate(`/CodeWindow/${project.id}`)}
     >
       <div className={style.icon}>
-        <img src={icon}></img>
+        <img src={languageIconsMap[project.language].icon}></img>
       </div>
 
       <h2> {project.projectName} </h2>
