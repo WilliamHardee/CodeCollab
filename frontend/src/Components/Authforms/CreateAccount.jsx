@@ -28,7 +28,7 @@ function CreateAccount({ setForm, setFormStatus }) {
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(e.target));
 
-    fetch("http://localhost:8080/user/create", {
+    fetch("https://localhost:8443/user/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

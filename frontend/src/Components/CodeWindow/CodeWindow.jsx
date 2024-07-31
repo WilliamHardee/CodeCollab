@@ -15,6 +15,7 @@ import {EditorView, keymap} from "@codemirror/view"
 import {defaultKeymap} from "@codemirror/commands"
 import {basicSetup} from 'codemirror'
 import {coolGlow} from 'thememirror'
+import {yCollab} from 'y-codemirror.next'
 
 function CodeWindow() {
   const { id } = useParams();
@@ -26,6 +27,9 @@ function CodeWindow() {
   const initializationAttempted = useRef(false);
   const iframeRef = useRef(null);
   const codeMirrorRef = useRef(null)
+  const ydocRef = useRef(null)
+  const providerRef = useRef(null);
+  const viewRef = useRef(null);
 
   async function run() {
     const files = {
@@ -54,7 +58,7 @@ function CodeWindow() {
   }
 
   function saveProject() {
-    fetch("http://localhost:8080/project/save", {
+    fetch("https://localhost:8443/project/save", {
       method: "PUT",
       credentials: "include",
       headers: {
@@ -78,7 +82,7 @@ function CodeWindow() {
   }
 
   function getProjectDetails() {
-    fetch(`http://localhost:8080/project/getProject/${id}`, {
+    fetch(`https://localhost:8443/project/getProject/${id}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -101,17 +105,39 @@ function CodeWindow() {
   }, [code]);
 
   useEffect(() => {
+    
+    if(!ydocRef.current) {
+      ydocRef.current = new Y.Doc();
+    }
+
+    if(!providerRef.current) {
+      providerRef.current = new WebrtcProvider('codemirror6demo', ydocRef.current)
+    }
+
+    const ytext = ydocRef.current.getText("codemirror")
+
     let startState = EditorState.create({
       doc: code,
-      extensions: [basicSetup, coolGlow],
+      extensions: [basicSetup, coolGlow, yCollab(ytext, providerRef.current.awareness)],
     })
-
+    console.log(providerRef.current.awareness)
     let view = new EditorView({
       state: startState,
       parent: document.querySelector("#editorContainer")
     })
+    providerRef.current.on('synced', (isSynced) => {
+      console.log('Synced:', isSynced);
+    });
 
-    return() => view.destroy()
+    ytext.observe(() => {
+      console.log('Document updated:', ytext.toString());
+    });
+
+    return() => {
+      view.destroy()
+      providerRef.current.destroy()
+      ydocRef.current.destroy()
+    }
   })
   useEffect(() => {
     async function bootWebContainer() {

@@ -8,7 +8,7 @@ function ProjectCard({ index, project, onDelete }) {
   const [icon, setIcon] = useState("");
 
   useEffect(() => {
-    setIcon(languageIconsMap[project.language]);
+    setIcon(languageIconsMap[project.language].icon);
   }, []);
 
   return (

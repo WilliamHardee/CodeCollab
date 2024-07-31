@@ -29,7 +29,7 @@ import com.collabcode.collabcode.service.ProjectService;
 import com.collabcode.collabcode.service.UserService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "https://localhost:5173", allowCredentials = "true")
 @RequestMapping("/project")
 public class ProjectController {
 

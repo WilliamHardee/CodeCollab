@@ -42,7 +42,7 @@ import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "https://localhost:5173", allowCredentials = "true")
 @RequestMapping("/user")
 public class UserController {
 

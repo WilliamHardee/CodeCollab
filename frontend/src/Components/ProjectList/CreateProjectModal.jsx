@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Styles/projectList.module.css";
 import Button from "../Global/Button";
-import { languageIcons } from "../../Data";
+import { languageIconsMap } from "../../Data";
 import session from "../../Session";
 
 function CreateProjectModal({onRemove}) {
@@ -19,7 +19,7 @@ function CreateProjectModal({onRemove}) {
   }, [name, selected])
 
   function handleSubmit() {
-    fetch("http://localhost:8080/project", {
+    fetch("https://localhost:8443/project", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -42,15 +42,15 @@ function CreateProjectModal({onRemove}) {
     <div className={style.projectModal}>
       <h1>Select Language</h1>
       <div className={style.iconContainer}>
-        {languageIcons.map((icon) => (
+        {Object.entries(languageIconsMap).map(([key, value]) => (
           <div
-            key={icon.name}
+            key={key}
             className={`${style.projectIcon} ${
-              icon.name == selected ? style.selectedCell : null
+              key == selected ? style.selectedCell : null
             }`}
-            onClick={() => setSelected(icon.name)}
+            onClick={() => setSelected(key)}
           >
-            <img src={icon.link}></img>
+            <img src={value.icon}></img>
           </div>
         ))}
       </div>

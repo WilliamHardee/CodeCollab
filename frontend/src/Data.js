@@ -64,19 +64,86 @@ export const languageIcons = [
 ];
 
 export const languageIconsMap = {
-    Python: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
-    Cpp: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
-    Java: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg",
-    Javascript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
-    Ruby: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg",
-    Php: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg",
-    Go: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg",
-    Typescript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
-    Swift: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg",
-    Kotlin: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg",
-    Csharp: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg",
-    Scala: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scala/scala-original.svg",
-    Perl: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/perl/perl-original.svg",
-    Dart: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg",
-    Haskell: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/haskell/haskell-original.svg"
+    Python: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+        install: "apt-get install python3",
+        run: "python3 "
+    },
+    Cpp: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
+        install: "apt-get install g++",
+        compile: "g++ filename.cpp -o ",
+        run: "./"
+    },
+    Java: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg",
+        install: "apt-get install default-jdk",
+        compile: "javac ",
+        run: "java "
+    },
+    Javascript: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+        install: "apt-get install nodejs",
+        run: "node "
+    },
+    Ruby: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg",
+        install: "apt-get install ruby",
+        run: "ruby "
+    },
+    Php: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg",
+        install: "apt-get install php",
+        run: "php "
+    },
+    Go: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg",
+        install: "apt-get install golang",
+        run: "go run " 
+    },
+    Typescript: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
+        install: [
+            "apt-get install nodejs",
+            "npm install -g typescript"
+        ],
+        compile: "tsc ",
+        run: "node "  
+    },
+    Kotlin: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg",
+        install: [
+            "curl -s https://get.sdkman.io | bash",
+            "sdk install kotlin"
+        ],
+        compile: "kotlinc filename.kt -include-runtime -d ",
+        run: "java -jar "
+    },
+    Csharp: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg",
+        install: "apt-get install dotnet-sdk-6.0",
+        compile: "dotnet build filename.csproj",
+        run: "dotnet run --project "
+    },
+    Scala: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scala/scala-original.svg",
+        install: [
+            "curl -s https://get.sdkman.io | bash",
+            "sdk install scala"
+        ],
+        compile: "scalac filename.scala",
+        run: "scala "
+    },
+    Perl: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/perl/perl-original.svg",
+        install: "apt-get install perl",
+        run: "perl"
+    },
+ 
+    Haskell: {
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/haskell/haskell-original.svg",
+        install: "apt-get install ghc",
+        compile: "ghc filename.hs",
+        run: "./"  // After compiling
+    }
 };
