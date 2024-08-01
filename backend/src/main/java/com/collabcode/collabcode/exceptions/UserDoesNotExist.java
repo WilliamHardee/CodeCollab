@@ -12,4 +12,5 @@ public class UserDoesNotExist extends Exception {
         this.message = msg;
     }
 
+
 }

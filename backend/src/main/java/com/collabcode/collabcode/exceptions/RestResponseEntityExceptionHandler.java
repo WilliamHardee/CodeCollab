@@ -87,6 +87,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(InvitationAlreadyExistsException.class)
+    public ResponseEntity<Object> handleInvitationAlreadyExistsException(Exception ex, WebRequest request) {
+
+        List<String> messages = new ArrayList<>();
+
+        messages.add(ex.getMessage());
+
+        ErrorResponse response = new ErrorResponse(messages, 409, request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(JwtAuthenticationException.class)
     public ResponseEntity<Object> handleJwtAuthenticationException(JwtAuthenticationException ex, WebRequest request) {
         List<String> messages = new ArrayList<>();

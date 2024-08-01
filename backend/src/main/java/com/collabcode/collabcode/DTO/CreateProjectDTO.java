@@ -15,7 +15,6 @@ public class CreateProjectDTO {
     @NotBlank(message = "Username is required")
     private String username;
 
-    // Constructor
     public CreateProjectDTO(String projectName, String projectData, String language, String username) {
         this.projectName = projectName;
         this.projectData = projectData;
@@ -23,13 +22,12 @@ public class CreateProjectDTO {
         this.username = username;
     }
 
-    // Getters
+
     public String getProjectName() { return projectName; }
     public String getProjectData() { return projectData; }
     public String getLanguage() { return language; }
     public String getUsername() { return username; }
 
-    // toString method
     @Override
     public String toString() {
         return "CreateProjectDTO{" +

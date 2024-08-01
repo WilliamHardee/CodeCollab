@@ -20,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
@@ -53,6 +54,9 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<UserRole> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "invitationId.user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invitations> invitations = new ArrayList<>();
 
     public User(String username, String password) {
         this.username = username;
@@ -105,6 +109,22 @@ public class User {
         return this.roles;
     }
 
+    public List<Invitations> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<Invitations> invitations) {
+        this.invitations = invitations;
+    }
+
+    public void addInvitation(Invitations invitation) {
+        invitations.add(invitation);
+        invitation.setUser(this);
+    }
+
+    public void removeInvitation(Invitations invitation) {
+        invitations.remove(invitation);
+    }
     
     
 }
