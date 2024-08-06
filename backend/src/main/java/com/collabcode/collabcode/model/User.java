@@ -4,6 +4,7 @@ package com.collabcode.collabcode.model;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.hibernate.annotations.ManyToAny;
@@ -124,6 +125,19 @@ public class User {
 
     public void removeInvitation(Invitations invitation) {
         invitations.remove(invitation);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
     
     

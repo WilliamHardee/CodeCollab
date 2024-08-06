@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,13 @@ public class ProjectService {
         Project project = projectOpt.get();
         project.setProjectData(data);
         projectRepository.save(project);
-        
-        
+ 
     }
+
+    public Set<User> getContributers(UUID id) throws ProjectDoesNotExist{
+        Optional<Project> project = this.findById(id);
+        return project.get().getUsers();
+    }
+
+
 }

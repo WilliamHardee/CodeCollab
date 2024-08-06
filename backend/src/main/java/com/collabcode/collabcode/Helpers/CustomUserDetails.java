@@ -14,9 +14,11 @@ import com.collabcode.collabcode.model.UserRole;
 public class CustomUserDetails extends User implements UserDetails {
     private String username;
     private String password;
+    private User user;
     Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User byUsername) {
+        this.user = byUsername;
         this.username = byUsername.getUsername();
         this.password = byUsername.getPassword();
         List<GrantedAuthority> auths = new ArrayList<>();
@@ -60,6 +62,10 @@ public class CustomUserDetails extends User implements UserDetails {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public User getUser() {
+        return this.user;
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class CreateInvitationDTO {
+public class UpdateInvitationDTO {
     @NotBlank(message = "inviter username is required")
     private String inviter_username;
 
@@ -15,7 +15,7 @@ public class CreateInvitationDTO {
     @NotNull(message = "project id is required")
     private UUID project_id;
 
-    public CreateInvitationDTO(String inviter_username, String invited_username, UUID project_id) {
+    public UpdateInvitationDTO(String inviter_username, String invited_username, UUID project_id) {
         this.invited_username = invited_username;
         this.inviter_username = inviter_username;
         this.project_id = project_id;

@@ -7,7 +7,7 @@ public class InvalidLoginCredentials extends Exception {
 
     public InvalidLoginCredentials(String message) {
         super(message);
-        this.message = "Username or Password is incorrect";
+        this.message = message;
     }
 
     public String getMessage() {

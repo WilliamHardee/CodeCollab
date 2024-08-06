@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collabcode.collabcode.DTO.CreateInvitationDTO;
-import com.collabcode.collabcode.DTO.DeleteInvitationDTO;
+import com.collabcode.collabcode.DTO.AcceptInvitationDTO;
+import com.collabcode.collabcode.DTO.UpdateInvitationDTO;
 import com.collabcode.collabcode.service.InvitationsService;
 import com.collabcode.collabcode.service.ProjectService;
 
@@ -29,7 +29,7 @@ public class InvitationController {
     InvitationsService invitationsService;
 
     @PostMapping("/create")
-    public ResponseEntity createInvitation(@Valid @RequestBody CreateInvitationDTO createInvitationDTO) throws Exception {
+    public ResponseEntity createInvitation(@Valid @RequestBody UpdateInvitationDTO createInvitationDTO) throws Exception {
         invitationsService.addInvitation(createInvitationDTO.getInvited_username(), 
                                         createInvitationDTO.getProject_id(),
                                         createInvitationDTO.getInviter_username());
@@ -37,8 +37,16 @@ public class InvitationController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity deleteInvitation(@Valid @RequestBody DeleteInvitationDTO deleteInvitationDTO) throws Exception {
-        invitationsService.deleteInvitation(deleteInvitationDTO.getUsername(), deleteInvitationDTO.getProject_id());
+    public ResponseEntity deleteInvitation(@Valid @RequestBody  UpdateInvitationDTO deleteInvitationDTO) throws Exception {
+        invitationsService.deleteInvitation(deleteInvitationDTO.getInvited_username(), deleteInvitationDTO.getProject_id(), deleteInvitationDTO.getInviter_username());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Map.of("status", 204));
     }
+
+    @PostMapping("/accept")
+    public ResponseEntity acceptInvitation(@Valid @RequestBody AcceptInvitationDTO acceptInvitationDTO) throws Exception {
+        invitationsService.acceptInvitation(acceptInvitationDTO.getUsername(), acceptInvitationDTO.getProjectID());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201));
+    }
+
+    
 }
