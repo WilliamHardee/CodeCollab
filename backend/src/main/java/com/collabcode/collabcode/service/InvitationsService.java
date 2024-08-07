@@ -1,5 +1,7 @@
 package com.collabcode.collabcode.service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -109,5 +111,24 @@ public class InvitationsService {
         userService.save(user.get());
 
     }
+
+    public List<Invitations> getInvitations(String username) throws InvalidLoginCredentials {
+          
+        User authedUser = authorizationService.getCurrentUser();
+
+        if(authedUser == null || !authedUser.getUsername().equals(username)) {
+            throw new InvalidLoginCredentials("Not authorized");
+        }
+
+        Optional<List<Invitations>> inviteList = invitationsRepository.getInvitationsByUsername(username);
+        
+        if(inviteList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return inviteList.get();
+        
+    }
+
+    
 
 }

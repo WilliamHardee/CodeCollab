@@ -22,6 +22,12 @@ function ProjectList() {
     [projects.length]
   );
 
+  function logout() {
+    sessionStorage.clear()
+    fetch('https://localhost:8443/user/logout', {method: "POST", credentials: "include" })
+    navigate("/")
+  }
+
   function getProjects() {
     const username = session.getSession("username");
     if (!username) {
@@ -75,7 +81,24 @@ function ProjectList() {
   }
 
   return (
-    <div>
+    <div className={style.wrapper}>
+      <div className={style.menu}>
+        <Button
+              text="Create Project"
+              clickable={true}
+              onClick={() => setModal(true)}
+            />
+        <div className={style.inviteContainer}>
+          <h2>Invites</h2>
+          <div className={style.inviteMenu}>
+
+          </div>
+        </div>
+        <div className={style.logout}>
+          <Button text="Logout" clickable={true} onClick={logout}/>
+        </div>
+       
+      </div>
       <div className={style.container}>
         <h1>P R O J E C T S</h1>
         <div className={style.project_list_container}>
@@ -97,11 +120,7 @@ function ProjectList() {
               </div>
             </CSSTransition>
           ))}
-          <Button
-            text="Create Project"
-            clickable={true}
-            onClick={() => setModal(true)}
-          />
+          
         </div>
       </div>
       <CSSTransition
