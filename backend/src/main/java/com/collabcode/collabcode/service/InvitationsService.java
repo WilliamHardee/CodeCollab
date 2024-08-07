@@ -55,14 +55,13 @@ public class InvitationsService {
 
         Optional<Invitations> check = invitationsRepository.findById(new InvitationsId(project_id, user.get()));
         if(check.isPresent()) {
-            throw new InvitationAlreadyExistsException("User already has an invitation for that project");
+            throw new InvitationAlreadyExistsException("User already has an invitation for this project");
         }
 
         Invitations invitation = new Invitations(new InvitationsId(project_id, user.get()), inviter_username);
         user.get().addInvitation(invitation);
 
         userService.save(user.get());
-
     }
 
     public void deleteInvitation(String username, UUID project_id, String deleter) throws UserDoesNotExist, ProjectDoesNotExist, InvalidLoginCredentials{
@@ -85,7 +84,6 @@ public class InvitationsService {
         }
         user.get().removeInvitation(invitation.get());
         userService.save(user.get());
-
     }
 
     public void acceptInvitation(String username, UUID project_id) throws UserDoesNotExist, ProjectDoesNotExist, Exception, InvalidLoginCredentials{
@@ -111,9 +109,5 @@ public class InvitationsService {
         userService.save(user.get());
 
     }
-
-    
-
-
 
 }

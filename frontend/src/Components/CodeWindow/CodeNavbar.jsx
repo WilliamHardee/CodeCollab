@@ -3,12 +3,12 @@ import style from "../../Styles/codewindow.module.css";
 import Button from "../Global/Button";
 import { useNavigate } from "react-router";
 
-const CodeNavbar = ({ projectId, updates, onRun }) => {
+const CodeNavbar = ({onRun, setModal }) => {
   const navigate = useNavigate();
 
   function logout() {
     sessionStorage.clear()
-    fetch('http://localhost:8080/user/logout', {method: "POST", credentials: "include" })
+    fetch('https://localhost:8443/user/logout', {method: "POST", credentials: "include" })
     navigate("/")
   }
  
@@ -19,7 +19,7 @@ const CodeNavbar = ({ projectId, updates, onRun }) => {
         <Button text="Run" clickable={true} onClick={onRun}/>
       </div>
       <div className={style.navItem}>
-        <Button text="Invite" clickable={true} />
+        <Button text="Invite" clickable={true} onClick={setModal} />
       </div>
       <div className={style.logout}>
         <Button text="Logout" clickable={true} onClick={logout}/>

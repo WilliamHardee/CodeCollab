@@ -11,6 +11,7 @@
     position: relative;
     top: 2em;
     z-index: 20;
+    border-width: 2px;
     border-color: rgb(54, 54, 54);
     border-style: solid;
 

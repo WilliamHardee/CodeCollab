@@ -3,28 +3,23 @@ import style from "../../Styles/codewindow.module.css";
 import { useParams } from "react-router-dom";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
-import * as Y from "yjs";
-import { WebrtcProvider } from "y-webrtc";
 import { EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { defaultKeymap } from "@codemirror/commands";
 import { basicSetup } from "codemirror";
 import { coolGlow } from "thememirror";
-import { yCollab } from "y-codemirror.next";
 import { languageIconsMap } from "../../Data";
+import InviteModal from "./InviteModal";
 
 function CodeWindow() {
   const { id } = useParams();
-  const [stompClient, setStompClient] = useState();
   const [code, setCode] = useState("");
-  const [connected, setConnect] = useState(false);
   const [project, setProject] = useState(null);
+  const [modal, setModal] = useState(false)
   const [webContainerInstance, setWebContainerInstance] = useState(null);
   const initializationAttempted = useRef(false);
   const iframeRef = useRef(null);
-
-  const ydocRef = useRef(null);
-  const providerRef = useRef(null);
+  const viewRef = useRef(null)
 
 
   async function run() {
@@ -116,32 +111,31 @@ function CodeWindow() {
     if (project) {
       saveProject();
     }
+
+    if (viewRef.current && viewRef.current.state.doc.toString() !== code) {
+      viewRef.current.dispatch({
+        changes: {
+          from: 0,
+          to: viewRef.current.state.doc.length,
+          insert: code
+        }
+      })
+    }
   }, [code]);
 
   useEffect(() => {
-    if (!ydocRef.current) {
-      ydocRef.current = new Y.Doc();
-    }
+    
 
-    if (!providerRef.current) {
-      providerRef.current = new WebrtcProvider(
-        "codemirror6demo",
-        ydocRef.current
-      );
-    }
-
-    const ytext = ydocRef.current.getText("codemirror");
 
     let startState = EditorState.create({
       doc: code,
       extensions: [
         basicSetup,
         coolGlow,
-        yCollab(ytext, providerRef.current.awareness),
 
       ],
     });
-    console.log(providerRef.current.awareness);
+
     let view = new EditorView({
       state: startState,
       parent: document.querySelector("#editorContainer"),
@@ -151,26 +145,19 @@ function CodeWindow() {
           setCode(view.state.doc.toString());
         }
       },
-    }, []);
-
-    
-
-    providerRef.current.on("synced", (isSynced) => {
-      console.log("Synced:", isSynced);
     });
 
-    ytext.observe(() => {
-      console.log("Document updated:", ytext.toString());
-    });
+    viewRef.current = view
+
+   
 
     return () => {
       view.destroy();
-      providerRef.current.destroy();
-      ydocRef.current.destroy();
     };
-  });
+  }, []);
   
   useEffect(() => {
+
     async function bootWebContainer() {
       if (!initializationAttempted.current) {
         initializationAttempted.current = true;
@@ -195,19 +182,22 @@ function CodeWindow() {
 
     return () => {
       if (webContainerInstance) {
-        webContainerInstance.teardown()
+        webContainerInstance.teardown().catch(err => {
+          console.error("Error tearing down webcontainer")
+        })
+        setWebContainerInstance(null)
       }
     };
-  }, [webContainerInstance]); 
+  }, []); 
 
   return (
     <>
-      <CodeNavbar onRun={run} />
+      <CodeNavbar onRun={run} setModal={() => setModal(!modal)}/>
       <div className={style.ide}>
         <div id="editorContainer" className={style.editorContainer}></div>
-
         <iframe ref={iframeRef} titel="output"></iframe>
       </div>
+      {modal && <InviteModal projectId={id}/>}
     </>
   );
 }
