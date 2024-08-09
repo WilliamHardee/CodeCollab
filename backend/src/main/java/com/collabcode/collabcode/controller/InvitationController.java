@@ -1,5 +1,6 @@
 package com.collabcode.collabcode.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.collabcode.collabcode.DTO.AcceptInvitationDTO;
+import com.collabcode.collabcode.DTO.InviteListResponseDTO;
 import com.collabcode.collabcode.DTO.UpdateInvitationDTO;
 import com.collabcode.collabcode.model.Invitations;
 import com.collabcode.collabcode.service.InvitationsService;
@@ -33,6 +35,9 @@ public class InvitationController {
 
     @Autowired
     InvitationsService invitationsService;
+
+    @Autowired
+    ProjectService projectService;
 
     @PostMapping("/create")
     public ResponseEntity createInvitation(@Valid @RequestBody UpdateInvitationDTO createInvitationDTO) throws Exception {
@@ -57,7 +62,16 @@ public class InvitationController {
     @GetMapping("/{username}")
     public ResponseEntity getByUsername(@PathVariable("username") String username)  throws Exception{
         List<Invitations> inviteList = invitationsService.getInvitations(username);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", 200, "invitations", inviteList));
+        List<InviteListResponseDTO> res = new ArrayList<>();
+        for(Invitations invite : inviteList) {
+            InviteListResponseDTO resDTO = new InviteListResponseDTO();
+            resDTO.setInvited_username(username);
+            resDTO.setInviter_username(invite.getInviter_username());
+            resDTO.setProject_id(invite.getProject_id());
+            resDTO.setProject_name(projectService.getById(invite.getProject_id()).getProjectName());
+            res.add(resDTO);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", 200, "invitations", res));
 
     }
 

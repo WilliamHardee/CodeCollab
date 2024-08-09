@@ -7,11 +7,13 @@ import style from "../../Styles/projectList.module.css";
 import Button from "../Global/Button";
 import CreateProjectModal from "./CreateProjectModal";
 import { CSSTransition } from "react-transition-group";
+import SideMenu from "./SideMenu";
 
 function ProjectList() {
   const [projects, setProjects] = useState([]);
   const [visibleProjects, setVisibleProjects] = useState([]);
   const [modal, setModal] = useState(false);
+  
   const modalRef = useRef(null);
   const navigate = useNavigate();
   const projectRefs = useMemo(
@@ -22,11 +24,7 @@ function ProjectList() {
     [projects.length]
   );
 
-  function logout() {
-    sessionStorage.clear()
-    fetch('https://localhost:8443/user/logout', {method: "POST", credentials: "include" })
-    navigate("/")
-  }
+
 
   function getProjects() {
     const username = session.getSession("username");
@@ -34,18 +32,33 @@ function ProjectList() {
       navigate("/");
     }
 
-    fetch(`https://localhost:8443/project/${username}`,
-      {credentials: "include"}
-    )
+    fetch(`https://localhost:8443/project/${username}`, {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((res) => {
         setProjects(res.projects);
-        console.log("fetching");
-        console.log(res.projects)
+        console.log(res.projects);
       })
       .catch((err) => console.log("An unexpected error happened: " + err));
   }
 
+  async function getInvites() {
+    try {
+      const response = await fetch(
+        `https://localhost:8443/invitation/${session.getSession("username")}`,
+        { credentials: "include" }
+      );
+      if (response.status != 200) {
+        throw new Error("Could not fetch invites");
+      }
+
+      const jsonRes = await response.json();
+      setInvitations(jsonRes.invitations);
+    } catch (err) {
+      console.error("Unexpected error occured", err);
+    }
+  }
   useEffect(() => {
     getProjects();
   }, []);
@@ -61,49 +74,34 @@ function ProjectList() {
 
   async function onDelete(e, projectId, i) {
     e.stopPropagation();
-    setVisibleProjects(prev => {
+    setVisibleProjects((prev) => {
       const newVisible = [...prev];
       newVisible[i] = false;
       return newVisible;
     });
-    await new Promise((res) => setTimeout(() => {
-      fetch(
-        `https://localhost:8443/user/deleteProject/${session.getSession(
-          "username"
-        )}/${projectId}`,
-        { method: "DELETE" ,
-          credentials: "include"
-        }
-      )
-        .catch((err) => console.log("unexpected error occured" + err));
-    }, 300));
-
+    await new Promise((res) =>
+      setTimeout(() => {
+        fetch(
+          `https://localhost:8443/user/deleteProject/${session.getSession(
+            "username"
+          )}/${projectId}`,
+          { method: "DELETE", credentials: "include" }
+        ).catch((err) => console.log("unexpected error occured" + err));
+      }, 300)
+    );
   }
 
   return (
     <div className={style.wrapper}>
-      <div className={style.menu}>
-        <Button
-              text="Create Project"
-              clickable={true}
-              onClick={() => setModal(true)}
-            />
-        <div className={style.inviteContainer}>
-          <h2>Invites</h2>
-          <div className={style.inviteMenu}>
-
-          </div>
-        </div>
-        <div className={style.logout}>
-          <Button text="Logout" clickable={true} onClick={logout}/>
-        </div>
+      <SideMenu setModal={setModal}/>
+      
        
-      </div>
       <div className={style.container}>
         <h1>P R O J E C T S</h1>
         <div className={style.project_list_container}>
           {projects.map((project, i) => (
-            <CSSTransition
+            <CSSTransition 
+              key={i}
               nodeRef={projectRefs[i]}
               in={visibleProjects[i]}
               timeout={200}
@@ -120,7 +118,6 @@ function ProjectList() {
               </div>
             </CSSTransition>
           ))}
-          
         </div>
       </div>
       <CSSTransition

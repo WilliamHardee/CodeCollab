@@ -11,9 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.collabcode.collabcode.exceptions.ProjectDoesNotExist;
+import com.collabcode.collabcode.model.Invitations;
 import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
 import com.collabcode.collabcode.repository.ProjectRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProjectService {
@@ -29,6 +32,17 @@ public class ProjectService {
 
     public Project save(Project project) {
         return projectRepository.save(project);
+    }
+    
+    @Transactional
+    public Project create(String name, String code, String language) {
+        Project project = new Project(name, code, language);
+        return projectRepository.save(project);
+    }
+
+    public Project getById(UUID id) throws ProjectDoesNotExist {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new ProjectDoesNotExist("Project not found with id: " + id));
     }
 
     public Optional<Project> findById(UUID id) throws ProjectDoesNotExist{
@@ -85,6 +99,11 @@ public class ProjectService {
     public Set<User> getContributers(UUID id) throws ProjectDoesNotExist{
         Optional<Project> project = this.findById(id);
         return project.get().getUsers();
+    }
+
+    public void deleteProject(Project project) {
+        
+        projectRepository.delete(project);
     }
 
 

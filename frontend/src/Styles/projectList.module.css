@@ -64,6 +64,11 @@ h1 {
     background-color: red;
 }
 
+.inviteCard > h2 {
+    margin-bottom: 0.25rem;
+    margin-left: 0; 
+}
+
 h2 {
     color:rgb(106,90,205);
     margin: 0rem 1rem;
@@ -260,3 +265,50 @@ h2 {
 .logout {
     margin-top: auto;
 }
+
+
+.inviteCard {
+    border-bottom-style: solid;
+    border-width: 2px;
+    border-color: rgb(54, 54, 54);
+    height: 7rem;
+    padding: 0 1rem;
+}
+
+.inviteCard > p {
+    color: gray;
+
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.buttonContainer > button {
+    cursor: pointer;
+    position: relative;
+    bottom: -1rem;
+    border-style: solid;
+    border-width: 2px;
+    text-align: center;
+    width: 40%;
+    height: 2rem;
+    transition: 0.25s;
+}
+
+.buttonContainer > button:hover {
+    bottom: -0.75rem;
+}
+
+.acceptButton {
+    border-color: #73f362;
+    color: #73f362;
+}
+
+.rejectButton {
+    border-color: rgb(255, 52, 52);
+    color: rgb(255, 52, 52);
+}
+

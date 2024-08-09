@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.hibernate.annotations.ManyToAny;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,7 +48,7 @@ public class User {
     @NotNull(message = "password cannot be empty")
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(name = "user_to_projects", 
         joinColumns = @JoinColumn(name="user_id"),
         inverseJoinColumns = @JoinColumn(name = "project_id"))
@@ -56,6 +57,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<UserRole> roles = new HashSet<>();
 
+    @JsonBackReference
     @OneToMany(mappedBy = "invitationId.user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invitations> invitations = new ArrayList<>();
 
@@ -82,7 +84,6 @@ public class User {
 
     public void addProject(Project project) {
         this.projects.add(project);
-        project.getUsers().add(this);
     }
 
     public void removeProject(Project project) {

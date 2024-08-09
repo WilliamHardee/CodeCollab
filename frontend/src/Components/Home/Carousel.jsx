@@ -7,13 +7,13 @@ function Carousel() {
     <div className={style.carousel}>
       <div className={style.iconContainer}>
         {languageIcons.map((icon) => (
-          <div className={style.icon}>
-            <img key={icon.name} src={icon.link}></img>
+          <div key={icon.name} className={style.icon}>
+            <img src={icon.link}></img>
           </div>
         ))}
         {languageIcons.map((icon) => (
-          <div className={style.icon}>
-            <img key={icon.name} src={icon.link}></img>
+          <div key={`${icon.name}2`} className={style.icon}>
+            <img src={icon.link}></img>
           </div>
         ))}
       </div>

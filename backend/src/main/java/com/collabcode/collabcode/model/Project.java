@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,7 +40,7 @@ public class Project {
     private String language;
 
     @JsonBackReference
-    @ManyToMany(mappedBy = "projects", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "projects")
     Set<User> users = new HashSet<>();
 
     public Project() {}

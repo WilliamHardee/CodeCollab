@@ -13,10 +13,14 @@ import org.springframework.stereotype.Service;
 import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
 import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
+import com.collabcode.collabcode.repository.ProjectRepository;
 import com.collabcode.collabcode.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
+
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -32,6 +36,7 @@ public class UserService {
         this.UserRepository = UserRepository;
     }
 
+    @Transactional
     public User create(User newUser) {
         String encrpytedPassword = encoder.encode(newUser.getPassword());
         newUser.setPassword(encrpytedPassword);
@@ -66,9 +71,12 @@ public class UserService {
 
     }
 
+    @Transactional
     public void addProject(User user, Project project) {
+   
         user.addProject(project);
         UserRepository.save(user);
+
     }
 
     public Optional<User> getIdByUsername(String username) {

@@ -129,6 +129,20 @@ public class InvitationsService {
         
     }
 
+    public void addInvitationSetup(String username, UUID project_id, String inviter_username) throws UserDoesNotExist, ProjectDoesNotExist, InvitationAlreadyExistsException, InvalidLoginCredentials{
+        
+        Optional<User> user = userService.getUserByUsername(username);
+        Optional<Project> project = projectService.findById(project_id);
+
+        user.orElseThrow(() -> new UserDoesNotExist("User with username: " + username + " does not exist"));
+        project.orElseThrow(() -> new ProjectDoesNotExist("Project with id: " + project_id + " does not exist"));
+    
+        Invitations invitation = new Invitations(new InvitationsId(project_id, user.get()), inviter_username);
+        user.get().addInvitation(invitation);
+
+        userService.save(user.get());
+    }
+
     
 
 }
