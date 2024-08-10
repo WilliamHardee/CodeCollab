@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +31,17 @@ public class InvitationsService {
     @Autowired
     UserService userService;
 
-    @Autowired
+    
     ProjectService projectService;
 
     @Autowired
     AuthorizationService authorizationService;
+
+    @Autowired
+    public InvitationsService(@Lazy ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
 
 
 
@@ -67,7 +75,7 @@ public class InvitationsService {
     }
 
     public void deleteInvitation(String username, UUID project_id, String deleter) throws UserDoesNotExist, ProjectDoesNotExist, InvalidLoginCredentials{
-        Optional<User> user = userService.getUserByUsername(username);
+        Optional<User> user = userService.getUserByUsername(deleter);
         Optional<Project> project = projectService.findById(project_id);
 
         user.orElseThrow(() -> new UserDoesNotExist("User with username: " + username + " does not exist"));
@@ -76,7 +84,9 @@ public class InvitationsService {
          
         User authedUser = authorizationService.getCurrentUser();
 
-        if(authedUser == null || !authedUser.getUsername().equals(deleter) || !project.get().getUsers().contains(authedUser)) {
+        if(authedUser == null || !authedUser.getUsername().equals(deleter)) {
+            System.out.println(authedUser.getUsername());
+            System.out.println(deleter);
             throw new InvalidLoginCredentials("Not authorized");
         }
 
@@ -143,6 +153,17 @@ public class InvitationsService {
         userService.save(user.get());
     }
 
+    public List<Invitations> getInviteByProjectId(UUID id) {
+        Optional<List<Invitations>> inviteList = invitationsRepository.getInvitationsByID(id);
+        if(inviteList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return inviteList.get();
+    }
+    
+    public void deleteInvitation(Invitations invite) {
+        invitationsRepository.delete(invite);
+    }
     
 
 }

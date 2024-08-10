@@ -20,15 +20,16 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class ProjectService {
-    
-    ProjectRepository projectRepository;
-    UserService userService;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Autowired
-    public ProjectService (ProjectRepository projectRepository, UserService userService) {
-        this.projectRepository = projectRepository;
-        this.userService = userService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private InvitationsService invitationsService;
+
+
 
     public Project save(Project project) {
         return projectRepository.save(project);
@@ -79,7 +80,7 @@ public class ProjectService {
         user.getProjects().remove(project);
 
         if(project.getUsers().isEmpty()) {
-            projectRepository.delete(project);
+            this.deleteProject(project);
         }
         else {
             projectRepository.save(project);
@@ -102,7 +103,10 @@ public class ProjectService {
     }
 
     public void deleteProject(Project project) {
-        
+        List<Invitations> inviteList = invitationsService.getInviteByProjectId(project.getId());
+        for(Invitations invite : inviteList) {
+            invitationsService.deleteInvitation(invite);
+        }
         projectRepository.delete(project);
     }
 

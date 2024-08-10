@@ -49,7 +49,7 @@ public class InvitationController {
 
     @DeleteMapping("/delete")
     public ResponseEntity deleteInvitation(@Valid @RequestBody  UpdateInvitationDTO deleteInvitationDTO) throws Exception {
-        invitationsService.deleteInvitation(deleteInvitationDTO.getInvited_username(), deleteInvitationDTO.getProject_id(), deleteInvitationDTO.getInviter_username());
+        invitationsService.deleteInvitation(deleteInvitationDTO.getInviter_username(), deleteInvitationDTO.getProject_id(), deleteInvitationDTO.getInvited_username());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Map.of("status", 204));
     }
 
