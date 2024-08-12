@@ -9,6 +9,7 @@ import CreateProjectModal from "./CreateProjectModal";
 import { CSSTransition } from "react-transition-group";
 import SideMenu from "./SideMenu";
 
+
 function ProjectList() {
   const [projects, setProjects] = useState([]);
   const [visibleProjects, setVisibleProjects] = useState([]);

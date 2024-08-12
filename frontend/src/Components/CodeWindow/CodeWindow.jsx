@@ -1,37 +1,37 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+
+
+import React, { useEffect, useRef, useState } from "react";
 import style from "../../Styles/codewindow.module.css";
 import { useParams } from "react-router-dom";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
-import { EditorState } from "@codemirror/state";
-import { EditorView, keymap } from "@codemirror/view";
-import { defaultKeymap } from "@codemirror/commands";
-import { basicSetup } from "codemirror";
-import { coolGlow } from "thememirror";
 import { languageIconsMap } from "../../Data";
 import InviteModal from "./InviteModal";
+import Editor from "./Editor";
+import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react";
+import { createClient } from "@liveblocks/client";
+
+
 
 function CodeWindow() {
   const { id } = useParams();
+  const [initialCode, setInitialCode] = useState("");
   const [code, setCode] = useState("");
   const [project, setProject] = useState(null);
-  const [modal, setModal] = useState(false)
+  const [modal, setModal] = useState(false);
   const [webContainerInstance, setWebContainerInstance] = useState(null);
   const initializationAttempted = useRef(false);
   const iframeRef = useRef(null);
-  const viewRef = useRef(null)
-
 
   async function run() {
     if(!webContainerInstance) {
-      return
+      return;
     }
     const data = languageIconsMap[project.language];
     console.log(data);
 
-    
-    const fileName = "Main" + data.extension
-    const outputFileName = "Main"
+    const fileName = "Main" + data.extension;
+    const outputFileName = "Main";
     const files = {
       [fileName]: {
         file: {
@@ -91,6 +91,7 @@ function CodeWindow() {
   }
 
   function getProjectDetails() {
+    setCode("")
     fetch(`https://localhost:8443/project/getProject/${id}`, {
       credentials: "include",
     })
@@ -98,7 +99,7 @@ function CodeWindow() {
       .then((res) => {
         if (res.status == 200) {
           setProject(res.project);
-          setCode(res.project.projectData);
+          setInitialCode(res.project.projectData);
         }
       })
       .catch((err) => {
@@ -106,58 +107,13 @@ function CodeWindow() {
       });
   }
 
-
   useEffect(() => {
     if (project) {
       saveProject();
     }
-
-    if (viewRef.current && viewRef.current.state.doc.toString() !== code) {
-      viewRef.current.dispatch({
-        changes: {
-          from: 0,
-          to: viewRef.current.state.doc.length,
-          insert: code
-        }
-      })
-    }
   }, [code]);
 
   useEffect(() => {
-    
-
-
-    let startState = EditorState.create({
-      doc: code,
-      extensions: [
-        basicSetup,
-        coolGlow,
-
-      ],
-    });
-
-    let view = new EditorView({
-      state: startState,
-      parent: document.querySelector("#editorContainer"),
-      dispatch: (tr) => {
-        view.update([tr]);
-        if (tr.docChanged) {
-          setCode(view.state.doc.toString());
-        }
-      },
-    });
-
-    viewRef.current = view
-
-   
-
-    return () => {
-      view.destroy();
-    };
-  }, []);
-  
-  useEffect(() => {
-
     async function bootWebContainer() {
       if (!initializationAttempted.current) {
         initializationAttempted.current = true;
@@ -169,23 +125,20 @@ function CodeWindow() {
         }
       }
     }
-  
 
     if (iframeRef.current) {
       iframeRef.current.srcdoc = `<html><body style="color:white; font-size: 1rem;"><code></code></body></html>`;
     }
-  
 
     getProjectDetails();
     bootWebContainer();
-  
 
     return () => {
       if (webContainerInstance) {
         webContainerInstance.teardown().catch(err => {
-          console.error("Error tearing down webcontainer")
-        })
-        setWebContainerInstance(null)
+          console.error("Error tearing down webcontainer");
+        });
+        setWebContainerInstance(null);
       }
     };
   }, []); 
@@ -194,8 +147,15 @@ function CodeWindow() {
     <>
       <CodeNavbar onRun={run} setModal={() => setModal(!modal)}/>
       <div className={style.ide}>
-        <div id="editorContainer" className={style.editorContainer}></div>
-        <iframe ref={iframeRef} titel="output"></iframe>
+        <LiveblocksProvider publicApiKey={"pk_prod_XrfW_yUzfEcFyy5aov1mI2FcnANGtz_lQT7L_Uf3UMGYHbOyvHAfsgoltgd4xkcY"}>
+          <RoomProvider id = {id} initialStorage={{code: initialCode}}>
+            <ClientSideSuspense fallback={<div>Loading...</div>}>
+              <Editor code={code} setCode={setCode} />
+            </ClientSideSuspense>
+  
+          </RoomProvider>
+        </LiveblocksProvider>
+        <iframe ref={iframeRef} title="output"></iframe>
       </div>
       {modal && <InviteModal projectId={id}/>}
     </>
