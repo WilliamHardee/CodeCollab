@@ -9,6 +9,5 @@ The Collaborative Code Editor is a real-time, web-based code editor that allows 
 - **Live Preview**: See the output of your code in real-time.
 - **User Authentication**: Secure login system to manage users.
 - **Chat Functionality**: In-built chat to communicate with collaborators.
-- **Version Control**: Track changes and revert to previous versions.
 
 
