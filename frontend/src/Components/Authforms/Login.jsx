@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import style from "../../Styles/authforms.module.css";
 import TitleCard from "../Global/TitleCard";
 import Message from "./Message";
@@ -6,65 +6,63 @@ import session from "../../Session";
 import { redirect, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import Button from "../Global/Button";
+import { authFormInitialState, formReducer } from "../Global/formReducer";
 
-function Login({ setForm, setFormStatus }) {
+function Login({ state, dispatch, setForm }) {
   const navigate = useNavigate();
-  const [errorMsg, setErrorMsg] = useState("");
-  const [submittable, setSubmittable] = useState(false);
-  const [userName, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (
-      userName.length >= 5 &&
-      userName.length <= 25 &&
-      password.length >= 5 &&
-      password.length <= 25
+      state.username.length >= 5 &&
+      state.username.length <= 25 &&
+      state.password.length >= 5 &&
+      state.password.length <= 25
     ) {
-      setSubmittable(true);
+      dispatch({type: "VALID"})
     } else {
-      setSubmittable(false);
+      dispatch({type: "INVALID"})
     }
-  }, [userName, password]);
+  }, [state.username, state.password]);
 
-  function handleFormSubmit(e) {
+
+  async function handleFormSubmit(e) {
     e.preventDefault();
-    const formData = Object.fromEntries(new FormData(e.target));
-
-    fetch("https://localhost:8443/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        username: formData.username,
-        password: formData.password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status == 200) {
-          session.setSession("username", formData.username);
-          navigate("/ProjectList");
-        } else {
-          e.target.reset();
-          setUsername("");
-          setPassword("");
-          setFormStatus([res.messages[0], true]);
-          setSubmittable(false);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setFormStatus(["Unexpected error occured please try again", true]);
-        setSubmittable(false);
+    dispatch({type:"FETCH_START"})
+    try {
+      const formData = Object.fromEntries(new FormData(e.target));
+      const response = await fetch("https://localhost:8443/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
       });
+
+      if(!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.messages[0] || "Login failed")
+      }
+
+      const jsonResult = await response.json();
+      session.setSession("username", formData.username);
+      navigate("/ProjectList");
+     
+    } catch (err) {
+      e.target.reset();
+      dispatch({type: "FETCH_ERROR", payload: err.message || "Unexpected Error"})
+    }
+    finally {
+      dispatch({type:"FETCH_END"})
+    }
   }
 
-  function switchForm() {
-    setForm("create");
-    setFormStatus(["", true]);
+
+  function handleTextChange(e) {
+    dispatch({type: "UPDATE_FIELD", payload: {name:e.target.name, value: e.target.value}})
   }
 
   return (
@@ -73,7 +71,7 @@ function Login({ setForm, setFormStatus }) {
         <h1>Log In</h1>
 
         <input
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => handleTextChange(e)}
           className={style.input}
           type="text"
           id="username"
@@ -83,7 +81,7 @@ function Login({ setForm, setFormStatus }) {
         />
 
         <input
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => handleTextChange(e)}
           className={style.input}
           type="password"
           id="password"
@@ -92,10 +90,10 @@ function Login({ setForm, setFormStatus }) {
           max="25"
         />
 
-        <Button text="Log In" clickable={submittable} isSubmit={true} />
+        <Button text="Log In" clickable={state.isValid} isSubmit={true} />
         <Button
           text="Create Account"
-          onClick={() => switchForm()}
+          onClick={() => setForm("create")}
           clickable={true}
         />
       </form>

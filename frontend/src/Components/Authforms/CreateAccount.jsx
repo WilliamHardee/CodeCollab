@@ -6,58 +6,55 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../Global/Button";
 
-function CreateAccount({ setForm, setFormStatus }) {
-  const [userName, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [submittable, setSubmittable] = useState(false);
+function CreateAccount({ state, dispatch, setForm }) {
 
   useEffect(() => {
     if (
-      userName.length >= 5 &&
-      userName.length <= 25 &&
-      password.length >= 5 &&
-      password.length <= 25
+      state.username.length >= 5 &&
+      state.username.length <= 25 &&
+      state.password.length >= 5 &&
+      state.password.length <= 25
     ) {
-      setSubmittable(true);
+      dispatch({type: "VALID"})
     } else {
-      setSubmittable(false);
+      dispatch({type: "INVALID"})
     }
-  }, [userName, password]);
+  }, [state.username, state.password]);
 
-  function handleFormSubmit(e) {
+  async function handleFormSubmit(e) {
     e.preventDefault();
-    const formData = Object.fromEntries(new FormData(e.target));
-
-    fetch("https://localhost:8443/user/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: formData.username,
-        password: formData.password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status == 201) {
-          setFormStatus(["Account Created", false]);
-
-          setForm("login");
-        } else {
-          setFormStatus([res.messages[0], true]);
-          setSubmittable(false);
-        }
-      })
-      .catch((e) => {
-        setFormStatus(["An unexpected error occurred", true]);
-        setSubmittable(false);
+    dispatch({type:"FETCH_START"})
+    try {
+      const formData = Object.fromEntries(new FormData(e.target));
+      const response = await fetch("https://localhost:8443/user/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
       });
+
+      if(!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.messages[0] || "Account creation failed")
+      }
+
+      setForm("login")
+     
+    } catch (err) {
+      dispatch({type: "FETCH_ERROR", payload: err.message || "Unexpected Error"})
+    }
+    finally {
+      dispatch({type:"FETCH_END"})
+    }
   }
 
-  function switchForm() {
-    setForm("login");
-    setFormStatus(["", true]);
+  function handleTextChange(e) {
+    dispatch({type: "UPDATE_FIELD", payload: {name:e.target.name, value: e.target.value}})
   }
 
   return (
@@ -66,7 +63,7 @@ function CreateAccount({ setForm, setFormStatus }) {
         <h1>Create Account</h1>
 
         <input
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => handleTextChange(e)}
           className={style.input}
           type="text"
           id="username"
@@ -76,7 +73,7 @@ function CreateAccount({ setForm, setFormStatus }) {
         />
 
         <input
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => handleTextChange(e)}
           className={style.input}
           type="password"
           id="password"
@@ -85,8 +82,8 @@ function CreateAccount({ setForm, setFormStatus }) {
           max="20"
         />
 
-        <Button text="Create" clickable={submittable} isSubmit={true} />
-        <Button text="Log in" onClick={() => switchForm()} clickable={true} />
+        <Button text="Create" clickable={state.isValid} isSubmit={true} />
+        <Button text="Log in" onClick={() => setForm("login")} clickable={true} />
       </form>
     </div>
   );

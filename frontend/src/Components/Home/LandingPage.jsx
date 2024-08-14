@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useReducer, useEffect, useState } from "react";
 import style from "../../Styles/landingpage.module.css";
 import Login from "../Authforms/Login";
 import Button from "../Global/Button";
@@ -8,9 +8,12 @@ import Carousel from "./Carousel";
 import Title from "./Title";
 import { useNavigate } from "react-router";
 import session from "../../Session";
+import { authFormInitialState, formReducer } from "../Global/formReducer";
+
 
 function LandingPage() {
   const [formStatus, setFormStatus] = useState(["", false]);
+  const [state, dispatch] = useReducer(formReducer, authFormInitialState)
   const [form, setForm] = useState("login");
   const navigate = useNavigate();
 
@@ -28,12 +31,12 @@ function LandingPage() {
       </div>
       <div>
         {form === "login" ? (
-          <Login setForm={setForm} setFormStatus={setFormStatus} />
+          <Login setForm={setForm} state={state} dispatch={dispatch}/>
         ) : null}
         {form === "create" ? (
-          <CreateAccount setForm={setForm} setFormStatus={setFormStatus} />
+          <CreateAccount setForm={setForm} state={state} dispatch={dispatch}/>
         ) : null}
-        <IOMessage message={formStatus[0]} error={formStatus[1]} />
+        <IOMessage message={state.errorMsg} error={state.error} />
       </div>
     </div>
   );
