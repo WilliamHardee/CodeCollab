@@ -27,6 +27,9 @@ public class LoadDatabase implements CommandLineRunner{
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+        if(userService.getIdByUsername("JohnDoe").isPresent()) {
+            return; 
+        }
         User testUser1U = new User("JohnDoe", "123456789");
         User testUser2U = new User("JohnDoe2", "987654321");
     
