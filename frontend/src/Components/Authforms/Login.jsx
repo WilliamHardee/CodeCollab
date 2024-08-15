@@ -54,6 +54,7 @@ function Login({ state, dispatch, setForm }) {
     } catch (err) {
       e.target.reset();
       dispatch({type: "FETCH_ERROR", payload: err.message || "Unexpected Error"})
+      dispatch({type: "CLEAR"})
     }
     finally {
       dispatch({type:"FETCH_END"})
@@ -90,7 +91,7 @@ function Login({ state, dispatch, setForm }) {
           max="25"
         />
 
-        <Button text="Log In" clickable={state.isValid} isSubmit={true} />
+        <Button text="Log In" loading={state.loading} clickable={state.isValid} isSubmit={true} />
         <Button
           text="Create Account"
           onClick={() => setForm("create")}

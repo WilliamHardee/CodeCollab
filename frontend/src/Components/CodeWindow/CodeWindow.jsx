@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
 import { languageIconsMap } from "../../Data";
-import InviteModal from "./InviteModal";
+import InviteModal from "../Global/InviteModal";
 import Editor from "./Editor";
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react";
 import { createClient } from "@liveblocks/client";

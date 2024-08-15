@@ -14,6 +14,13 @@ const authFormInitialState = {
     
 }
 
+const createProjectInitialState = {
+    ...baseFormState,
+    language: "",
+    projectName: ""
+
+}
+
 function formReducer(state, action) {
     switch(action.type) {
         case "VALID":
@@ -50,9 +57,20 @@ function formReducer(state, action) {
                 ...state,
                 loading: false
             }
+        case "CLEAR":
+            return {
+                ...state,
+                ...Object.keys(authFormInitialState).reduce((acc, key) => {
+                    if (!(key in baseFormState)) {
+                        console.log(key)
+                        acc[key] = authFormInitialState[key];
+                    }
+                    return acc;
+                }, {})
+            }
         default:
             return state;
     }
 }
 
-export {authFormInitialState, formReducer}
+export {createProjectInitialState, authFormInitialState, formReducer}

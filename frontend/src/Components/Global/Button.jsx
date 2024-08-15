@@ -1,6 +1,6 @@
 import style from '../../Styles/button.module.css'
 
-function Button({text, onClick, clickable, isSubmit}) {
+function Button({text, onClick, clickable, isSubmit, loading}) {
 
   return (
     <button 
@@ -9,7 +9,10 @@ function Button({text, onClick, clickable, isSubmit}) {
       onClick={clickable && !isSubmit ? onClick : null} 
       disabled={!clickable}
     >
-      {text}
+      <div className={style.buttonContent}>
+        {loading && <div className={style.loader}></div>}
+        {text}
+      </div>
     </button>
   )
 }

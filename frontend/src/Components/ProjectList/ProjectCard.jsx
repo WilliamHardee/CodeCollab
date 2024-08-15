@@ -16,7 +16,9 @@ function ProjectCard({ index, project, onDelete }) {
       </div>
 
       <h2> {project.projectName} </h2>
-
+      <div className={style.inviteIcon}>
+        Invite
+      </div>
       <div className={style.subicon} onClick={(e) => onDelete(e, project.id, index)}>
         <img src="/svg/trashcan.svg"></img>
       </div>

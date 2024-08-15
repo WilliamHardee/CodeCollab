@@ -6,22 +6,28 @@
     width: 25rem;
     height: 4rem;
     border-radius: 5px;
-    position: relative;
+    position: absolute;
     transition: 1s;
     z-index: 10;
     
 }
 
+.ioMessageContainer {
+    width: 100%;
+    display: flex;
+   justify-content: center;
+}
+
 .error {
     background-color: rgb(235, 49, 49);
-    bottom: -1rem;
+    bottom: -5rem;
 }
 
 .success {
     background-color: rgb(64, 64, 255);
-    bottom: -1rem;
+    bottom: -5rem;
 }
 
 .up {
-  bottom: 10rem;
+  bottom: 4rem;
 }

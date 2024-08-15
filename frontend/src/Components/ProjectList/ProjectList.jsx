@@ -44,22 +44,7 @@ function ProjectList() {
       .catch((err) => console.log("An unexpected error happened: " + err));
   }
 
-  async function getInvites() {
-    try {
-      const response = await fetch(
-        `https://localhost:8443/invitation/${session.getSession("username")}`,
-        { credentials: "include" }
-      );
-      if (response.status != 200) {
-        throw new Error("Could not fetch invites");
-      }
-
-      const jsonRes = await response.json();
-      setInvitations(jsonRes.invitations);
-    } catch (err) {
-      console.error("Unexpected error occured", err);
-    }
-  }
+  
   useEffect(() => {
     getProjects();
   }, []);
@@ -134,7 +119,7 @@ function ProjectList() {
         unmountOnExit
       >
         <div ref={modalRef}>
-          <CreateProjectModal onRemove={onModalExit} />
+          <CreateProjectModal onModalExit={onModalExit} />
         </div>
       </CSSTransition>
     </div>

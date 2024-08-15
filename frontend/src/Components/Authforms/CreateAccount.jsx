@@ -82,7 +82,7 @@ function CreateAccount({ state, dispatch, setForm }) {
           max="20"
         />
 
-        <Button text="Create" clickable={state.isValid} isSubmit={true} />
+        <Button loading={state.loading}  text="Create" clickable={state.isValid} isSubmit={true} />
         <Button text="Log in" onClick={() => setForm("login")} clickable={true} />
       </form>
     </div>

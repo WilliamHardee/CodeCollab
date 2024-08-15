@@ -9,7 +9,10 @@ function IOMessage({message, error}) {
   }, [error])
   
   return (
-    <div className={`${style.ioMessage} ${message ? mesageStyle : style.up}`}>{message}</div>
+    <div className={style.ioMessageContainer}>
+      <div className={`${style.ioMessage} ${message ? mesageStyle : style.up}`}>{message}</div>
+    </div>
+
   )
 }
 

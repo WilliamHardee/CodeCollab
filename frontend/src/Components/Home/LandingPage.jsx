@@ -12,10 +12,8 @@ import { authFormInitialState, formReducer } from "../Global/formReducer";
 
 
 function LandingPage() {
-  const [formStatus, setFormStatus] = useState(["", false]);
   const [state, dispatch] = useReducer(formReducer, authFormInitialState)
   const [form, setForm] = useState("login");
-  const navigate = useNavigate();
 
   return (
     <div className={style.container}>

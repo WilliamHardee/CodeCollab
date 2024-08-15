@@ -1,8 +1,8 @@
 import {React, useState} from 'react'
 import style from "../../Styles/codewindow.module.css"
-import Button from '../Global/Button'
+import Button from './Button'
 import session from '../../Session'
-import IOMessage from '../Global/IOMessage'
+import IOMessage from './IOMessage'
 function InviteModal({projectId}) {
     const [username, setUsername] = useState("")
     const [errorMsg, setErrorMsg] = useState(null)

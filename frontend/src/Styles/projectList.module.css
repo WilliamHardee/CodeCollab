@@ -48,7 +48,7 @@ h1 {
 }
 
 .subicon {
-    margin-left: auto;
+    margin-left: 1rem;
     margin-right: 1rem;
     width: 3rem;
     height: 3rem;
@@ -62,6 +62,29 @@ h1 {
 
 .subicon:hover {
     background-color: red;
+}
+
+.inviteIcon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: 1rem;
+    width: 6rem;
+    border-color: rgb(54, 54, 54);
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 5px; 
+    color: rgb(54, 54, 54);
+    height: 3rem;
+    transition: 0.25s;
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+.inviteIcon:hover {
+    color: rgb(106,90,205);
+    border-color: rgb(106,90,205);
 }
 
 .inviteCard > h2 {
@@ -86,8 +109,17 @@ h2 {
     border-radius: 10px;
     border-width: 2px;
     display: flex;
+    z-index: 20;
     flex-direction: column;
     align-items: center;
+}
+
+.modalContainer {
+    position: fixed;
+    width: 40rem;
+    height: 40rem;
+    top: calc(50% - 20rem);
+    left: calc(50% - 20rem);
 }
 
 
