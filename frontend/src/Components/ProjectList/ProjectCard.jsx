@@ -3,8 +3,13 @@ import style from "../../Styles/projectList.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { languageIconsMap } from "../../Data";
 
-function ProjectCard({ index, project, onDelete }) {
+function ProjectCard({ index, project, onDelete, setInviteModal, setSelectedId }) {
   const navigate = useNavigate();
+  function handleInviteClick(e) {
+    e.stopPropagation()
+    setSelectedId(project.id)
+    setInviteModal(true)
+  }
   return (
 
     <div
@@ -16,7 +21,7 @@ function ProjectCard({ index, project, onDelete }) {
       </div>
 
       <h2> {project.projectName} </h2>
-      <div className={style.inviteIcon}>
+      <div className={style.inviteIcon} onClick={(e) => handleInviteClick(e)}>
         Invite
       </div>
       <div className={style.subicon} onClick={(e) => onDelete(e, project.id, index)}>

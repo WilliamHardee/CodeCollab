@@ -1,0 +1,168 @@
+.inviteModal {
+    position: fixed;
+    top: calc(50% - 10rem);
+    left: calc(50% - 25rem);
+    background-color: rgb(15, 15, 15);
+    border-color: rgb(54, 54, 54);
+    height: 20rem;
+    width: 50rem;
+    border-width: 2px;
+    border-radius: 10px;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    align-items: center;
+    z-index: 20;
+
+}
+
+.modalTextarea {
+    border-style: none none solid none;
+    border-color: black;
+    background-color: rgb(15, 15, 15);
+    width: 20rem;
+    font-size: 1.25rem;
+    transition: 0.25s;
+    overflow: hidden;
+    resize: none;
+    margin: auto;
+    
+}
+
+
+
+.modalTextarea > textarea {
+    all: inherit;
+    background: none; 
+    border: none; 
+    outline: none; 
+    width: 100%;
+    height: 100%; 
+    resize: none; 
+}
+
+.modalTextarea:focus-within {
+    border-color: rgb(106, 90, 205);
+}
+
+.modalTitle{
+    margin: 0;
+}
+
+.projectModal {
+    position: fixed;
+    width: 40rem;
+    height: 40rem;
+    top: calc(50% - 20rem);
+    left: calc(50% - 20rem);
+    background-color: rgb(15, 15, 15);
+    border-color: rgb(54, 54, 54);
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    display: flex;
+    z-index: 20;
+    flex-direction: column;
+    align-items: center;
+}
+
+.outsideModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 5; 
+}
+
+.modalContainer {
+    position: fixed;
+    width: 40rem;
+    height: 40rem;
+    top: calc(50% - 20rem);
+    left: calc(50% - 20rem);
+    z-index: 20;
+}
+
+
+.iconContainer {
+    width: 100%;
+    height: 50%;
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-template-rows: 30% 30% 30%;
+    grid-row-gap: 2%;
+    justify-items: center;
+}
+
+.projectIcon {
+    position: relative;
+    width: 5rem;
+    transition: 0.5s;
+    bottom: 0px;
+    border-color: rgb(106,90,205);
+
+}
+
+.projectIcon:hover {
+    border-bottom-style: solid;
+}
+
+.projectIcon > img {
+    position: relative;
+    transition: 0.25s;
+    bottom: 0px;
+
+}
+
+.projectIcon > img:hover {
+    bottom: 10px;
+
+}
+
+.selectedCell {
+    border-bottom-style: solid;
+}
+
+.modalButton {
+    margin-top: auto;
+    margin-bottom: 1rem;
+}
+
+.exitButton {
+    width: 3rem;
+    height: 3rem;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    border-style: solid;
+    border-color: rgb(54, 54, 54);
+    border-width: 2px;
+    background-color: inherit;
+    transition: 0.5s;
+    border-radius: 5px;
+}
+
+.exitButton:hover {
+  background-color: red;
+}
+
+
+.modalEnter {
+    opacity: 0;
+}
+
+.modalEnterActive {
+    opacity: 1;
+    transition: 200ms;
+}
+
+.modalExit {
+    opacity: 1;
+}
+.modalExitActive {
+    opacity: 0;
+    transition: 200ms;
+}

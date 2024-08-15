@@ -5,15 +5,18 @@ import { useNavigate } from "react-router";
 import ProjectCard from "./ProjectCard";
 import style from "../../Styles/projectList.module.css";
 import Button from "../Global/Button";
-import CreateProjectModal from "./CreateProjectModal";
+import CreateProjectModal from "../Modals/CreateProjectModal";
 import { CSSTransition } from "react-transition-group";
 import SideMenu from "./SideMenu";
+import InviteModal from "../Modals/InviteModal";
 
 
 function ProjectList() {
   const [projects, setProjects] = useState([]);
   const [visibleProjects, setVisibleProjects] = useState([]);
   const [modal, setModal] = useState(false);
+  const [inviteModal, setInviteModal] = useState(false);
+  const [selectedId, setSelectedId] = useState("")
   
   const modalRef = useRef(null);
   const navigate = useNavigate();
@@ -39,7 +42,6 @@ function ProjectList() {
       .then((res) => res.json())
       .then((res) => {
         setProjects(res.projects);
-        console.log(res.projects);
       })
       .catch((err) => console.log("An unexpected error happened: " + err));
   }
@@ -100,28 +102,14 @@ function ProjectList() {
               unmountOnExit
             >
               <div ref={projectRefs[i]}>
-                <ProjectCard index={i} project={project} onDelete={onDelete} />
+                <ProjectCard index={i} project={project} onDelete={onDelete} setInviteModal={setInviteModal} setSelectedId={setSelectedId}/>
               </div>
             </CSSTransition>
           ))}
         </div>
       </div>
-      <CSSTransition
-        nodeRef={modalRef}
-        in={modal}
-        timeout={200}
-        classNames={{
-          enter: style.modalEnter,
-          enterActive: style.modalEnterActive,
-          exit: style.modalExit,
-          exitActive: style.modalExitActive,
-        }}
-        unmountOnExit
-      >
-        <div ref={modalRef}>
-          <CreateProjectModal onModalExit={onModalExit} />
-        </div>
-      </CSSTransition>
+        <CreateProjectModal modal={modal} onModalExit={onModalExit} />
+        <InviteModal inviteModal={inviteModal} setInviteModal={setInviteModal} projectId={selectedId}/>
     </div>
   );
 }

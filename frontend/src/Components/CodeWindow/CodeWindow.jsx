@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
 import { languageIconsMap } from "../../Data";
-import InviteModal from "../Global/InviteModal";
+import InviteModal from "../Modals/InviteModal";
 import Editor from "./Editor";
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react";
 import { createClient } from "@liveblocks/client";
@@ -39,11 +39,6 @@ function CodeWindow() {
         },
       },
     };
-
-    data.install.forEach(async (ins) => {
-      const array = ins.split(" ");
-      await webContainerInstance.spawn(array[0], [...array.slice(1)]);
-    });
 
     if(data.compile) {
       const compileCommand = data.compile[0];
@@ -100,6 +95,8 @@ function CodeWindow() {
         if (res.status == 200) {
           setProject(res.project);
           setInitialCode(res.project.projectData);
+          bootWebContainer(res.project)
+
         }
       })
       .catch((err) => {
@@ -113,25 +110,31 @@ function CodeWindow() {
     }
   }, [code]);
 
-  useEffect(() => {
-    async function bootWebContainer() {
-      if (!initializationAttempted.current) {
-        initializationAttempted.current = true;
-        try {
-          const instance = await WebContainer.boot();
-          setWebContainerInstance(instance);
-        } catch (error) {
-          console.error("Error booting WebContainer", error);
-        }
+  async function bootWebContainer(projectData) {
+    if (!initializationAttempted.current) {
+      initializationAttempted.current = true;
+      try {
+        const instance = await WebContainer.boot();
+        setWebContainerInstance(instance);
+        const data = languageIconsMap[projectData.language];
+        data.install.forEach(async (ins) => {
+          const array = ins.split(" ");
+          await instance.spawn(array[0], [...array.slice(1)]);
+        });
+      } catch (error) {
+        console.error("Error booting WebContainer", error);
       }
     }
+  }
+
+
+  useEffect(() => {
 
     if (iframeRef.current) {
       iframeRef.current.srcdoc = `<html><body style="color:white; font-size: 1rem;"><code></code></body></html>`;
     }
 
     getProjectDetails();
-    bootWebContainer();
 
     return () => {
       if (webContainerInstance) {
@@ -157,7 +160,7 @@ function CodeWindow() {
         </LiveblocksProvider>
         <iframe ref={iframeRef} title="output"></iframe>
       </div>
-      {modal && <InviteModal projectId={id}/>}
+      <InviteModal setInviteModal={setModal} inviteModal={modal} projectId={id}/>
     </>
   );
 }
