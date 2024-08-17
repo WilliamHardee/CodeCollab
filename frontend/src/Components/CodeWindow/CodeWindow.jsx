@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "../../Styles/codewindow.module.css";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
 import { languageIconsMap } from "../../Data";
@@ -11,6 +11,7 @@ import {
   RoomProvider,
   ClientSideSuspense,
 } from "@liveblocks/react";
+import { getWebContainerInstance, teardownWebContainer } from "../Global/webContainerSingleton";
 import { createClient } from "@liveblocks/client";
 
 function CodeWindow() {
@@ -20,18 +21,16 @@ function CodeWindow() {
   const [project, setProject] = useState(null);
   const [modal, setModal] = useState(false);
   const [runLoading, setrunLoading] = useState(false)
-  const [webContainerInstance, setWebContainerInstance] = useState(null);
-  const initializationAttempted = useRef(false);
+  const webContainerRef = useRef(null)
   const iframeRef = useRef(null);
 
   async function run() {
     setrunLoading(true)
-    if (!webContainerInstance) {
+    if (!webContainerRef.current) {
       setrunLoading(false)
       return;
     }
     const data = languageIconsMap[project.language];
-    console.log(data);
 
     const fileName = "Main" + data.extension;
     const outputFileName = "Main";
@@ -43,18 +42,18 @@ function CodeWindow() {
       },
     };
 
-    await webContainerInstance.mount(files);
+    await webContainerRef.current.mount(files);
 
     if (data.compile) {
       const compileCommand = data.compile[0];
       const compileArgs = [...data.compile.slice(1), fileName, outputFileName];
-      await webContainerInstance.spawn(compileCommand, compileArgs);
+      await webContainerRef.current.spawn(compileCommand, compileArgs);
     }
 
     
 
     const runArgs = data.compile ? [outputFileName] : [fileName];
-    const process = await webContainerInstance.spawn(data.run[0], [
+    const process = await webContainerRef.current.spawn(data.run[0], [
       ...data.run.slice(1),
       ...runArgs,
     ]);
@@ -150,19 +149,13 @@ function CodeWindow() {
   }, [code]);
 
   async function bootWebContainer(projectData) {
-    if (!initializationAttempted.current) {
-      initializationAttempted.current = true;
-      try {
-        const instance = await WebContainer.boot();
-        setWebContainerInstance(instance);
-        const data = languageIconsMap[projectData.language];
-        data.install.forEach(async (ins) => {
-          const array = ins.split(" ");
-          await instance.spawn(array[0], [...array.slice(1)]);
-        });
-      } catch (error) {
-        console.error("Error booting WebContainer", error);
-      }
+    webContainerRef.current = await getWebContainerInstance();
+    if (project) {
+      const data = languageIconsMap[projectData.language];
+      data.install.forEach(async (ins) => {
+        const array = ins.split(" ");
+        await webContainerRef.current.spawn(array[0], [...array.slice(1)]);
+      });
     }
   }
 
@@ -180,12 +173,9 @@ function CodeWindow() {
     getProjectDetails();
 
     return () => {
-      if (webContainerInstance) {
-        webContainerInstance.teardown().catch((err) => {
-          console.error("Error tearing down webcontainer");
-        });
-        setWebContainerInstance(null);
-      }
+      teardownWebContainer().catch((err) => {
+        console.error("Error tearing down webcontainer:", err);
+      });
     };
   }, []);
 
@@ -200,7 +190,7 @@ function CodeWindow() {
         >
           <RoomProvider id={id} initialStorage={{ code: initialCode }}>
             <ClientSideSuspense fallback={<div>Loading...</div>}>
-              <Editor code={code} setCode={setCode} language={getLanguage} />
+              <Editor code={code} setCode={setCode} project={project} />
             </ClientSideSuspense>
           </RoomProvider>
         </LiveblocksProvider>

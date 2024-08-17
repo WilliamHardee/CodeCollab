@@ -28,7 +28,6 @@ function InviteModal({ projectId, inviteModal, setInviteModal }) {
 
       if (response.status != 201) {
         const json = await response.json();
-        console.log(json)
         throw new Error(json.messages[0] || "Error inviting user");
       } 
       setInviteModal(false);

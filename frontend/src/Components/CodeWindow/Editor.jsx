@@ -5,6 +5,7 @@ import { basicSetup } from "codemirror";
 import { coolGlow } from "thememirror";
 import style from "../../Styles/codewindow.module.css"
 import { python } from "@codemirror/lang-python";
+import {javascript} from "@codemirror/lang-javascript"
 import {indentWithTab} from "@codemirror/commands"
 import * as Y from "yjs";
 import { yCollab } from "y-codemirror.next";
@@ -12,7 +13,7 @@ import { LiveblocksProvider, useOthers, useRoom, useStorage } from "@liveblocks/
 import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import session from "../../Session";
 
-function Editor({ code, setCode, language }) {
+function Editor({ code, setCode, project }) {
   const viewRef = useRef(null);
   const room = useRoom();
   const others = useOthers();
@@ -30,6 +31,9 @@ function Editor({ code, setCode, language }) {
  
 
   useEffect(() => {
+    if(!project?.language) {
+      return
+    }
     const yDoc = new Y.Doc();
     const yText = yDoc.getText("codemirror");
     const liveBlocksProvider = new LiveblocksYjsProvider(room, yDoc);
@@ -38,11 +42,13 @@ function Editor({ code, setCode, language }) {
       name: session.getSession("username"),
       color: getRandomColor(),
     })
+
+    const mode = project.language == "Python" ? python() : javascript()
     let startState = EditorState.create({
       doc: code,
       extensions: [
         basicSetup,
-        python(),
+        mode,
         coolGlow,
         keymap.of([indentWithTab]),
         yCollab(yText, liveBlocksProvider.awareness),
@@ -60,12 +66,11 @@ function Editor({ code, setCode, language }) {
     });
 
     viewRef.current = view;
-    console.log(others)
     return () => {
       liveBlocksProvider.destroy();
       view.destroy();
     };
-  }, []);
+  }, [project]);
 
   useEffect(() => {
     if (viewRef.current && viewRef.current.state.doc.toString() !== code) {
