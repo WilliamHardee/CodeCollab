@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useRef, useState } from "react";
 import style from "../../Styles/codewindow.module.css";
 import { useParams } from "react-router-dom";
@@ -8,10 +6,12 @@ import { WebContainer } from "@webcontainer/api";
 import { languageIconsMap } from "../../Data";
 import InviteModal from "../Modals/InviteModal";
 import Editor from "./Editor";
-import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react";
+import {
+  LiveblocksProvider,
+  RoomProvider,
+  ClientSideSuspense,
+} from "@liveblocks/react";
 import { createClient } from "@liveblocks/client";
-
-
 
 function CodeWindow() {
   const { id } = useParams();
@@ -19,12 +19,15 @@ function CodeWindow() {
   const [code, setCode] = useState("");
   const [project, setProject] = useState(null);
   const [modal, setModal] = useState(false);
+  const [runLoading, setrunLoading] = useState(false)
   const [webContainerInstance, setWebContainerInstance] = useState(null);
   const initializationAttempted = useRef(false);
   const iframeRef = useRef(null);
 
   async function run() {
-    if(!webContainerInstance) {
+    setrunLoading(true)
+    if (!webContainerInstance) {
+      setrunLoading(false)
       return;
     }
     const data = languageIconsMap[project.language];
@@ -40,25 +43,54 @@ function CodeWindow() {
       },
     };
 
-    if(data.compile) {
+    await webContainerInstance.mount(files);
+
+    if (data.compile) {
       const compileCommand = data.compile[0];
       const compileArgs = [...data.compile.slice(1), fileName, outputFileName];
       await webContainerInstance.spawn(compileCommand, compileArgs);
     }
 
+    
+
     const runArgs = data.compile ? [outputFileName] : [fileName];
-    await webContainerInstance.mount(files);
-    const process = await webContainerInstance.spawn(data.run[0], [...data.run.slice(1),...runArgs]);
-  
+    const process = await webContainerInstance.spawn(data.run[0], [
+      ...data.run.slice(1),
+      ...runArgs,
+    ]);
+
+
+
+
     let result = "";
+
     process.output.pipeTo(
       new WritableStream({
-        write(data) {
+        async write(data) {
           result += data;
-          iframeRef.current.contentWindow.document.body.innerHTML = result;
+          const formattedResult = result.replace(/\n/g, '<br>');
+          iframeRef.current.contentWindow.document.body.innerHTML = `${formattedResult}<input style="background-color: black; color: white; border-style:none; outline: none; box-shadow: none;" id="userInput" type="text" />`;
+          const inputElement = iframeRef.current.contentWindow.document.getElementById('userInput');
+          inputElement.focus();
+
+          inputElement.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+              const input = inputElement.value + '\n';
+              inputElement.value = '';
+
+              const writer = process.input.getWriter();
+              await writer.write(input);
+              writer.releaseLock();
+            }
+          });
         },
       })
     );
+    
+    const exitCode = await process.exit;
+    setrunLoading(false)
+    console.log("Process exited with code:", exitCode);
+  
   }
 
   function saveProject() {
@@ -86,7 +118,7 @@ function CodeWindow() {
   }
 
   function getProjectDetails() {
-    setCode("")
+    setCode("");
     fetch(`https://localhost:8443/project/getProject/${id}`, {
       credentials: "include",
     })
@@ -95,13 +127,20 @@ function CodeWindow() {
         if (res.status == 200) {
           setProject(res.project);
           setInitialCode(res.project.projectData);
-          bootWebContainer(res.project)
-
+          bootWebContainer(res.project);
         }
       })
       .catch((err) => {
         console.log("An unexpected error occured: " + err);
       });
+  }
+
+  function getLanguage(project) {
+    console.log(project.language)
+    if(project.language == "Python") {
+      return python()
+    }
+    return null
   }
 
   useEffect(() => {
@@ -127,40 +166,51 @@ function CodeWindow() {
     }
   }
 
-
   useEffect(() => {
-
     if (iframeRef.current) {
-      iframeRef.current.srcdoc = `<html><body style="color:white; font-size: 1rem;"><code></code></body></html>`;
+      iframeRef.current.srcdoc = `
+          <html>
+            <body style="color:white; font-size: 1rem;">
+              <code></code>
+              <div id="inputArea"></div>
+            </body>
+          </html>`;
     }
 
     getProjectDetails();
 
     return () => {
       if (webContainerInstance) {
-        webContainerInstance.teardown().catch(err => {
+        webContainerInstance.teardown().catch((err) => {
           console.error("Error tearing down webcontainer");
         });
         setWebContainerInstance(null);
       }
     };
-  }, []); 
+  }, []);
 
   return (
     <>
-      <CodeNavbar onRun={run} setModal={() => setModal(!modal)}/>
+      <CodeNavbar loading={runLoading} onRun={run} setModal={() => setModal(!modal)} />
       <div className={style.ide}>
-        <LiveblocksProvider publicApiKey={"pk_prod_XrfW_yUzfEcFyy5aov1mI2FcnANGtz_lQT7L_Uf3UMGYHbOyvHAfsgoltgd4xkcY"}>
-          <RoomProvider id = {id} initialStorage={{code: initialCode}}>
+        <LiveblocksProvider
+          publicApiKey={
+            "pk_prod_XrfW_yUzfEcFyy5aov1mI2FcnANGtz_lQT7L_Uf3UMGYHbOyvHAfsgoltgd4xkcY"
+          }
+        >
+          <RoomProvider id={id} initialStorage={{ code: initialCode }}>
             <ClientSideSuspense fallback={<div>Loading...</div>}>
-              <Editor code={code} setCode={setCode} />
+              <Editor code={code} setCode={setCode} language={getLanguage} />
             </ClientSideSuspense>
-  
           </RoomProvider>
         </LiveblocksProvider>
         <iframe ref={iframeRef} title="output"></iframe>
       </div>
-      <InviteModal setInviteModal={setModal} inviteModal={modal} projectId={id}/>
+      <InviteModal
+        setInviteModal={setModal}
+        inviteModal={modal}
+        projectId={id}
+      />
     </>
   );
 }

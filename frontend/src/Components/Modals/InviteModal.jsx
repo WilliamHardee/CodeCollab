@@ -1,16 +1,17 @@
-import { React, useState, useRef } from "react";
+import { React, useState, useRef, useReducer, useEffect } from "react";
 //import style from "../../Styles/codewindow.module.css"
 import style from "../../Styles/modals.module.css";
 import Button from "../Global/Button";
 import session from "../../Session";
 import IOMessage from "../Global/IOMessage";
 import { CSSTransition } from "react-transition-group";
+import { inviteModalInitialState, formReducer } from "../Global/formReducer";
 function InviteModal({ projectId, inviteModal, setInviteModal }) {
-  const [username, setUsername] = useState("");
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [state, dispatch] = useReducer(formReducer, inviteModalInitialState)
   const modalRef = useRef(null);
 
   async function handleSubmit() {
+    dispatch({type: "FETCH_START"})
     try {
       const response = await fetch("https://localhost:8443/invitation/create", {
         method: "POST",
@@ -20,22 +21,35 @@ function InviteModal({ projectId, inviteModal, setInviteModal }) {
         },
         body: JSON.stringify({
           inviter_username: session.getSession("username"),
-          invited_username: username,
+          invited_username: state.username,
           project_id: projectId,
         }),
       });
 
       if (response.status != 201) {
         const json = await response.json();
-        setErrorMsg(json.messages[0]);
-      } else {
-        setErrorMsg(null);
-        setInviteModal(false);
-      }
+        console.log(json)
+        throw new Error(json.messages[0] || "Error inviting user");
+      } 
+      setInviteModal(false);
+      
     } catch (err) {
-      console.error("An unexpected error occured");
+      dispatch({
+        type: "FETCH_ERROR",
+        payload: err.message || "Unexpected Error",
+      });
+    }
+    finally {
+      dispatch({type: "FETCH_END"})
     }
   }
+
+  function handleTextChange(name, value) {
+    dispatch({ type: "UPDATE_FIELD", payload: { name: name, value: value } });
+  }
+
+  useEffect(() => dispatch({type: "CLEAR_ERROR"}),[inviteModal])
+
   return (
     <CSSTransition
       nodeRef={modalRef}
@@ -58,13 +72,13 @@ function InviteModal({ projectId, inviteModal, setInviteModal }) {
           <h1 className={style.modalTitle}>Invite a new Collaborator</h1>
           <div className={style.modalTextarea}>
             <textarea
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => handleTextChange("username", e.target.value)}
               placeholder="Username"
               rows="1"
             ></textarea>
           </div>
-          <Button text="invite" clickable={true} onClick={handleSubmit} />
-          {errorMsg && <IOMessage message={errorMsg} error={true} />}
+          <Button loading={state.loading} text="invite" clickable={true} onClick={handleSubmit} />
+          {state.errorMsg && <IOMessage message={state.errorMsg} error={state.error} />}
           <div
             className={style.exitButton}
             onClick={() => setInviteModal(false)}

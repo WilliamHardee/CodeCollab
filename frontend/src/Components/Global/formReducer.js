@@ -21,6 +21,11 @@ const createProjectInitialState = {
 
 }
 
+const inviteModalInitialState = {
+    ...baseFormState,
+    username: ""
+}
+
 function formReducer(state, action) {
     switch(action.type) {
         case "VALID":
@@ -68,9 +73,16 @@ function formReducer(state, action) {
                     return acc;
                 }, {})
             }
+        case "CLEAR_ERROR":
+            return {
+                ...state,
+                errorMsg: "",
+                error: false
+                
+            }
         default:
             return state;
     }
 }
 
-export {createProjectInitialState, authFormInitialState, formReducer}
+export {inviteModalInitialState, createProjectInitialState, authFormInitialState, formReducer}

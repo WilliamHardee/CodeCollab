@@ -37,7 +37,7 @@ function CreateProjectModal({ onModalExit, modal }) {
       });
 
       if (response.status != 201) {
-        const errorData = response.json();
+        const errorData = await response.json();
         throw new Error(errorData.message[0] || "Error creating project");
       }
       onModalExit();

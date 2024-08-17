@@ -4,6 +4,7 @@ import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { coolGlow } from "thememirror";
 import style from "../../Styles/codewindow.module.css"
+import { python } from "@codemirror/lang-python";
 import {indentWithTab} from "@codemirror/commands"
 import * as Y from "yjs";
 import { yCollab } from "y-codemirror.next";
@@ -11,7 +12,7 @@ import { LiveblocksProvider, useOthers, useRoom, useStorage } from "@liveblocks/
 import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import session from "../../Session";
 
-function Editor({ code, setCode }) {
+function Editor({ code, setCode, language }) {
   const viewRef = useRef(null);
   const room = useRoom();
   const others = useOthers();
@@ -26,6 +27,8 @@ function Editor({ code, setCode }) {
     return color;
   }
 
+ 
+
   useEffect(() => {
     const yDoc = new Y.Doc();
     const yText = yDoc.getText("codemirror");
@@ -39,6 +42,7 @@ function Editor({ code, setCode }) {
       doc: code,
       extensions: [
         basicSetup,
+        python(),
         coolGlow,
         keymap.of([indentWithTab]),
         yCollab(yText, liveBlocksProvider.awareness),
