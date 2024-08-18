@@ -29,7 +29,7 @@ import com.collabcode.collabcode.service.ProjectService;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:5173", allowCredentials = "true")
+
 @RequestMapping("/invitation")
 public class InvitationController {
 

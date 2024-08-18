@@ -42,7 +42,7 @@ import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:5173", allowCredentials = "true")
+
 @RequestMapping("/user")
 public class UserController {
 
@@ -65,7 +65,7 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity logout(HttpServletResponse response) throws InvalidLoginCredentials {
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
-            .httpOnly(true)  // or false if you need JavaScript access
+            .httpOnly(true)  
             .secure(false)
             .path("/")
             .maxAge(0)
@@ -80,7 +80,7 @@ public class UserController {
     public ResponseEntity login(@Valid @RequestBody User user, HttpServletResponse response) throws InvalidLoginCredentials {
         String jwt = userService.login(user);
         ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
-            .httpOnly(true)  // or false if you need JavaScript access
+            .httpOnly(true)  
             .secure(false)
             .path("/")
             .maxAge(3600)
