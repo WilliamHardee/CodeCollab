@@ -8,7 +8,7 @@ function SideMenu({ setModal }) {
   const navigate = useNavigate();
   function logout() {
     sessionStorage.clear();
-    fetch("https://localhost:8443/user/logout", {
+    fetch("http://localhost:8443/user/logout", {
       method: "POST",
       credentials: "include",
     });
@@ -17,7 +17,7 @@ function SideMenu({ setModal }) {
   async function getInvites() {
     try {
       const response = await fetch(
-        `https://localhost:8443/invitation/${session.getSession("username")}`,
+        `http://localhost:8443/invitation/${session.getSession("username")}`,
         { credentials: "include" }
       );
       if (response.status != 200) {
@@ -33,7 +33,7 @@ function SideMenu({ setModal }) {
 
   async function acceptInvite(id) {
     try {
-    const response = await fetch("https://localhost:8443/invitation/accept", {
+    const response = await fetch("http://localhost:8443/invitation/accept", {
       credentials: "include",
       method: "POST",
       headers: {
@@ -59,7 +59,7 @@ function SideMenu({ setModal }) {
 
   async function rejectInvite(id, inviter) {
     try {
-      const response = await fetch("https://localhost:8443/invitation/delete", {
+      const response = await fetch("http://localhost:8443/invitation/delete", {
         credentials: "include",
         method: "DELETE",
         headers: {
@@ -85,7 +85,7 @@ function SideMenu({ setModal }) {
   }
 
 
-  useEffect(() => getInvites, []);
+  useEffect(() => {getInvites()}, []);
 
   return (
     <div className={style.menu}>

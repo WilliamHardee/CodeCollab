@@ -85,8 +85,6 @@ public class InvitationsService {
         User authedUser = authorizationService.getCurrentUser();
 
         if(authedUser == null || !authedUser.getUsername().equals(deleter)) {
-            System.out.println(authedUser.getUsername());
-            System.out.println(deleter);
             throw new InvalidLoginCredentials("Not authorized");
         }
 

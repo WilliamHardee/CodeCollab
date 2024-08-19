@@ -36,7 +36,7 @@ function ProjectList() {
       navigate("/");
     }
 
-    fetch(`https://localhost:8443/project/${username}`, {
+    fetch(`http://localhost:8443/project/${username}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -70,7 +70,7 @@ function ProjectList() {
     await new Promise((res) =>
       setTimeout(() => {
         fetch(
-          `https://localhost:8443/user/deleteProject/${session.getSession(
+          `http://localhost:8443/user/deleteProject/${session.getSession(
             "username"
           )}/${projectId}`,
           { method: "DELETE", credentials: "include" }

@@ -22,7 +22,7 @@ function CreateProjectModal({ onModalExit, modal }) {
   async function handleSubmit() {
     dispatch({ type: "FETCH_START" });
     try {
-      const response = await fetch("https://localhost:8443/project", {
+      const response = await fetch("http://localhost:8443/project", {
         method: "POST",
         credentials: "include",
         headers: {

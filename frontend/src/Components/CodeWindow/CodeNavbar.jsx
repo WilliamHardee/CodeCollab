@@ -7,7 +7,7 @@ const CodeNavbar = ({loading, onRun, setModal }) => {
 
   function logout() {
     sessionStorage.clear()
-    fetch('https://localhost:8443/user/logout', {method: "POST", credentials: "include" })
+    fetch('http://localhost:8443/user/logout', {method: "POST", credentials: "include" })
     navigate("/")
   }
  
