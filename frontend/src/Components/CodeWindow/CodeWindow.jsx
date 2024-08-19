@@ -93,7 +93,7 @@ function CodeWindow() {
   }
 
   function saveProject() {
-    fetch("https://localhost:8443/project/save", {
+    fetch("http://localhost:8443/project/save", {
       method: "PUT",
       credentials: "include",
       headers: {
@@ -118,7 +118,7 @@ function CodeWindow() {
 
   function getProjectDetails() {
     setCode("");
-    fetch(`https://localhost:8443/project/getProject/${id}`, {
+    fetch(`http://localhost:8443/project/getProject/${id}`, {
       credentials: "include",
     })
       .then((res) => res.json())

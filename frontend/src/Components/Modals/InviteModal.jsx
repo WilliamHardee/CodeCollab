@@ -13,7 +13,7 @@ function InviteModal({ projectId, inviteModal, setInviteModal }) {
   async function handleSubmit() {
     dispatch({type: "FETCH_START"})
     try {
-      const response = await fetch("https://localhost:8443/invitation/create", {
+      const response = await fetch("http://localhost:8443/invitation/create", {
         method: "POST",
         credentials: "include",
         headers: {

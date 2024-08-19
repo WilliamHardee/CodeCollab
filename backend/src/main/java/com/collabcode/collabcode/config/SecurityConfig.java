@@ -3,6 +3,7 @@ package com.collabcode.collabcode.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,6 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.collabcode.collabcode.Helpers.CustomOAuth2AuthProvider;
+import com.collabcode.collabcode.Helpers.CustomOAuth2SuccessHandler;
+import com.collabcode.collabcode.repository.UserRepository;
+import com.collabcode.collabcode.service.CustomOAuth2UserService;
 import com.collabcode.collabcode.service.UserDetailsServiceImpl;
 
 @Configuration
@@ -25,6 +30,16 @@ public class SecurityConfig {
 
     @Autowired
     JwtAuthFilter jwtAuthFilter;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private CustomOAuth2AuthProvider customOAuth2AuthProvider;
+
+    @Autowired
+    @Lazy
+    private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -50,6 +65,8 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+  
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

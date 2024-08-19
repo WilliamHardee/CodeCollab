@@ -44,9 +44,10 @@ public class User {
     private String username;
 
     @Column(name="password")
-    @Size(min = 5, message = "password must be longer than 5 characters")
-    @NotNull(message = "password cannot be empty")
     private String password;
+
+
+    private String accountType;
 
     @ManyToMany
     @JoinTable(name = "user_to_projects", 
@@ -74,7 +75,11 @@ public class User {
         this.id = id;
     }
 
-    public void setUserName(String username) {
+    public void setAccountType(String type) {
+        this.accountType = type;
+    }
+
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -97,6 +102,10 @@ public class User {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getAccountType(String type) {
+        return this.accountType;
     }
 
     public String getPassword() {
