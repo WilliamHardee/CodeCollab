@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.collabcode.collabcode.Helpers.CustomOAuth2AuthProvider;
+//import com.collabcode.collabcode.Helpers.CustomOAuth2AuthProvider;
 import com.collabcode.collabcode.Helpers.CustomOAuth2SuccessHandler;
 import com.collabcode.collabcode.repository.UserRepository;
 import com.collabcode.collabcode.service.CustomOAuth2UserService;
@@ -34,12 +34,12 @@ public class SecurityConfig {
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
 
-    @Autowired
-    private CustomOAuth2AuthProvider customOAuth2AuthProvider;
 
     @Autowired
-    @Lazy
     private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+
+    //@Autowired
+    //private CustomOAuth2AuthProvider customOAuth2AuthProvider;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -54,6 +54,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/login", "/user/create", "/h2-console/**").permitAll()
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("http://localhost:5173/projectList", true)
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
+                        .successHandler(customOAuth2SuccessHandler))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
