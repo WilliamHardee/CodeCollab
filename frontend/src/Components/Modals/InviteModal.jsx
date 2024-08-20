@@ -20,8 +20,7 @@ function InviteModal({ projectId, inviteModal, setInviteModal }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inviter_username: session.getSession("username"),
-          invited_username: state.username,
+          username: state.username,
           project_id: projectId,
         }),
       });

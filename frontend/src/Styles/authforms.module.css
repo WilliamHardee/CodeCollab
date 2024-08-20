@@ -1,19 +1,72 @@
-.authForm {
-    width: 25rem;
-    height: 27rem;
+.authFormContainer {
+    width: 26rem;
+    min-height: 35rem;
     background-color: rgb(15, 15, 15);
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    margin: 2rem 0;
-    position: relative;
-    top: 2em;
-    z-index: 20;
     border-width: 2px;
     border-color: rgb(54, 54, 54);
     border-style: solid;
+    z-index: 20;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.or {
+    display: flex;
+    justify-content: center;
+    color: rgb(54, 54, 54);
+    font-size: 1.25rem;
+    width: 100%;
+}
+
+.or > div {
+    border-style: solid;
+    margin: auto;
+    width: 10rem;
+    border-width: 1px;
+    border-color: rgb(54, 54, 54);
+
+    
+}
+
+.googleButton:hover {
+   background-color: lightblue;
+}
+
+.googleButton {
+    position: relative;
+    background-color: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20rem;
+    height: 4rem;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.googleButton > img {
+    position: absolute;
+    margin-right: 80%;
+}
+
+.authForm {
+    width: 25rem;
+    height: 27rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 1rem;
+    position: relative;
+    top: 1em;
 
 }
 

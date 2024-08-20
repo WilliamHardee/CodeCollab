@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -39,19 +40,21 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
+        String provider = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-    
+
 
         String email = oAuth2User.getAttribute("email");
 
 
-        Optional<User> user = userRepository.getUserByUsername(email);
+        Optional<User> user = userRepository.findByUsername(email);
         if(user.isEmpty()) {
             User newUser = new User();
             newUser.setUsername(email);
             newUser.setPassword(null);
-            newUser.setAccountType("OAUTH2");
+            newUser.setAccountType("OAUTH");
             userRepository.save(newUser);
         }
 
@@ -65,6 +68,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
 
         String token = jwtService.GenerateToken(userDetails.getUsername());
+
 
         ResponseCookie cookie = ResponseCookie.from("jwt", token)
             .httpOnly(true)  

@@ -15,6 +15,8 @@ function LandingPage() {
   const [state, dispatch] = useReducer(formReducer, authFormInitialState)
   const [form, setForm] = useState("login");
 
+  useEffect(() => {dispatch({type: "FORM_RESET", payload: authFormInitialState})}, [form])
+
   return (
     <div className={style.container}>
       <div className={style.infocontainer}>

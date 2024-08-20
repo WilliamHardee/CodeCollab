@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "../../Styles/codewindow.module.css";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CodeNavbar from "./CodeNavbar";
 import { WebContainer } from "@webcontainer/api";
 import { languageIconsMap } from "../../Data";
@@ -13,8 +13,10 @@ import {
 } from "@liveblocks/react";
 import { getWebContainerInstance, teardownWebContainer } from "../Global/webContainerSingleton";
 import { createClient } from "@liveblocks/client";
+import session from "../../Session";
 
 function CodeWindow() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [initialCode, setInitialCode] = useState("");
   const [code, setCode] = useState("");
@@ -23,6 +25,22 @@ function CodeWindow() {
   const [runLoading, setrunLoading] = useState(false)
   const webContainerRef = useRef(null)
   const iframeRef = useRef(null);
+
+  async function fetchUsername() {
+    try {
+      const response = await fetch("http://localhost:8443/user", {credentials: "include"})
+      if(response.status != 200) {
+        console.log(response.status)
+        navigate("/")
+        return
+      }
+      const jsonRes = await response.json()
+      session.setSession("username", jsonRes.username)
+    }
+    catch (e) {
+      console.error("An unexpected error occured", e)
+    }
+  }
 
   async function run() {
     setrunLoading(true)
@@ -160,6 +178,8 @@ function CodeWindow() {
   }
 
   useEffect(() => {
+    fetchUsername()
+
     if (iframeRef.current) {
       iframeRef.current.srcdoc = `
           <html>

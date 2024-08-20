@@ -32,11 +32,8 @@ function ProjectList() {
 
   function getProjects() {
     const username = session.getSession("username");
-    if (!username) {
-      navigate("/");
-    }
 
-    fetch(`http://localhost:8443/project/${username}`, {
+    fetch(`http://localhost:8443/project`, {
       credentials: "include",
     })
       .then((res) => res.json())

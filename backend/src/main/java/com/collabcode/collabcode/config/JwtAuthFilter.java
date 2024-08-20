@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private static final String[] EXCLUDED_PATHS = { "/user/login", "/user/create", "/h2-console/**" };
+    private static final String[] EXCLUDED_PATHS = { "/user/login", "/user/create", "/h2-console/**", "/logout" };
 
     @Autowired
     private JwtService jwtService;

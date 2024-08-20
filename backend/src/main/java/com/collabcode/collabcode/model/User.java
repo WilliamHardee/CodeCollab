@@ -29,7 +29,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name="users")
+@Table(name="users", uniqueConstraints = {@UniqueConstraint(name = "Unique user and login method", columnNames = {"username", "accountType"})})
 public class User {
 
     @Id
@@ -37,7 +37,7 @@ public class User {
     @Column(name="id")
     private Integer id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     @Size(min = 5, message = "username must be longer than 5 characters")
     @Size(max = 30, message = "username must be shorter than 30 characters")
     @NotNull(message = "username cannot be empty")
@@ -46,7 +46,7 @@ public class User {
     @Column(name="password")
     private String password;
 
-
+    @NotNull(message = "user must have account type")
     private String accountType;
 
     @ManyToMany
@@ -65,6 +65,12 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public User(String username, String password, String accountType) {
+        this.username = username;
+        this.password = password;
+        this.accountType = accountType;
     }
 
     public User() {
@@ -104,7 +110,7 @@ public class User {
         return this.username;
     }
 
-    public String getAccountType(String type) {
+    public String getAccountType() {
         return this.accountType;
     }
 

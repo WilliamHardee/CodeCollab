@@ -52,10 +52,11 @@ public class SecurityConfig {
                 .headers().frameOptions().disable().and()
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/login", "/user/create", "/h2-console/**").permitAll()
+                        .requestMatchers("/user/login", "/user/create", "/h2-console/**", "/logout").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("http://localhost:5173/projectList", true)
+                        .failureUrl("http://localhost:5173/")
                         .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler))
                 .authenticationProvider(authenticationProvider())

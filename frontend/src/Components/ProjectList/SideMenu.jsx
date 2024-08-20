@@ -17,7 +17,7 @@ function SideMenu({ setModal }) {
   async function getInvites() {
     try {
       const response = await fetch(
-        `http://localhost:8443/invitation/${session.getSession("username")}`,
+        `http://localhost:8443/invitation`,
         { credentials: "include" }
       );
       if (response.status != 200) {
@@ -33,16 +33,9 @@ function SideMenu({ setModal }) {
 
   async function acceptInvite(id) {
     try {
-    const response = await fetch("http://localhost:8443/invitation/accept", {
+    const response = await fetch(`http://localhost:8443/invitation/accept/${id}`, {
       credentials: "include",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: session.getSession("username"),
-        project_id: id,
-      }),
+      method: "POST"
     });
 
     if(response.status != 201) {
@@ -66,8 +59,7 @@ function SideMenu({ setModal }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inviter_username: inviter,
-          invited_username: session.getSession("username"),
+          username: inviter,
           project_id: id,
         }),
       });
