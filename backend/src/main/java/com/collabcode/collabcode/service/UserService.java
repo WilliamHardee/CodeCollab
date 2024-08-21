@@ -10,17 +10,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.collabcode.collabcode.DTO.CreateLoginDTO;
 import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
+import com.collabcode.collabcode.exceptions.UsernameAlreadyExistsException;
 import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
-import com.collabcode.collabcode.repository.ProjectRepository;
+
 import com.collabcode.collabcode.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
-
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -37,10 +38,37 @@ public class UserService {
     }
 
     @Transactional
-    public User create(User newUser) {
-        String encrpytedPassword = encoder.encode(newUser.getPassword());
-        newUser.setPassword(encrpytedPassword);
+    public User create(CreateLoginDTO user) throws UsernameAlreadyExistsException {
+
+        if (this.getUserByUsernameAndType(user.getUsername(), "LOCAL").isPresent()) {
+            throw new UsernameAlreadyExistsException("Username already exists");
+        }
+
+        Optional<User> oAuthUser = this.getUserByUsernameAndType(user.getUsername(), "OAUTH");
+        if (oAuthUser.isPresent()) {
+
+            User existingUser = oAuthUser.get();
+            existingUser.setAccountType("LOCAL");
+            String encryptedPassword = encoder.encode(user.getPassword());
+            existingUser.setPassword(encryptedPassword);
+            return UserRepository.save(existingUser);
+        }
+
+        User newUser = new User(user.getUsername(), user.getPassword(), "LOCAL");
+        String encryptedPassword = encoder.encode(newUser.getPassword());
+        newUser.setPassword(encryptedPassword);
         return UserRepository.save(newUser);
+    }
+
+    @Transactional
+    public User create(User user) {
+        String encrpytedPassword = encoder.encode(user.getPassword());
+        user.setPassword(encrpytedPassword);
+        return UserRepository.save(user);
+    }
+
+    public Optional<User> getUserByUsernameAndType(String username, String type) {
+        return UserRepository.getUserByUsernameAndType(username, type);
     }
 
     public User save(User newUser) {
@@ -55,13 +83,16 @@ public class UserService {
         return UserRepository.findByUsername(username);
     }
 
-    public String login(User user) throws InvalidLoginCredentials {
+    public String login(CreateLoginDTO loginUser) throws InvalidLoginCredentials {
         String jwt = null;
+
         try {
+
             Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
             if (authentication.isAuthenticated()) {
-                jwt = jwtService.GenerateToken(user.getUsername());
+                jwt = jwtService.GenerateToken(loginUser.getUsername());
             }
         } catch (Exception e) {
             throw new InvalidLoginCredentials("Username or password is incorrect");
@@ -73,7 +104,7 @@ public class UserService {
 
     @Transactional
     public void addProject(User user, Project project) {
-   
+
         user.addProject(project);
         UserRepository.save(user);
 

@@ -3,7 +3,6 @@ package com.collabcode.collabcode.service;
 
 import java.util.Optional;
 
-import org.hibernate.validator.internal.util.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.collabcode.collabcode.Helpers.CustomUserDetails;
-import com.collabcode.collabcode.exceptions.UserDoesNotExist;
+
 import com.collabcode.collabcode.model.User;
 import com.collabcode.collabcode.repository.UserRepository;
 
@@ -29,4 +28,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         
         return new CustomUserDetails(user.get());
     }
+
 }

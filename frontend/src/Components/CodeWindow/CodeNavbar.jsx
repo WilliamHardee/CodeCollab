@@ -5,10 +5,18 @@ import { useNavigate } from "react-router";
 const CodeNavbar = ({loading, onRun, setModal }) => {
   const navigate = useNavigate();
 
-  function logout() {
-    sessionStorage.clear()
-    fetch('http://localhost:8443/user/logout', {method: "POST", credentials: "include" })
-    navigate("/")
+  async function logout() {
+
+    sessionStorage.clear();
+    try {
+      await fetch("http://localhost:8443/user/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    }
+    catch (e) {console.error("Unexpected logout error", e)}
+    finally {navigate("/");}
+    
   }
  
   return (

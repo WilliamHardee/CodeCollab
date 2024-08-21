@@ -32,7 +32,6 @@ function CreateProjectModal({ onModalExit, modal }) {
           projectName: state.projectName,
           projectData: "",
           language: state.language,
-          username: session.getSession("username"),
         }),
       });
 

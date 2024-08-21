@@ -1,5 +1,6 @@
 package com.collabcode.collabcode.controller;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,15 +44,11 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity createProject(@RequestBody CreateProjectDTO project) throws Exception {
+    public ResponseEntity createProject(@RequestBody CreateProjectDTO project, Principal principal) throws Exception {
         
         Project newProject = projectService.save(new Project(project.getProjectName(), project.getProjectData(), project.getLanguage()));
 
-        Optional<User> optionalUser = userService.getUserByUsername(project.getUsername());
-        optionalUser.orElseThrow(() -> new UserDoesNotExist("User: " + project.getUsername() + " does not exist"));
-     
-      
-        User user = optionalUser.get();
+        User user = userService.getUserByUsername(principal.getName()).get();
 
         user.addProject(newProject);
         userService.save(user);
@@ -59,9 +56,9 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201, "project_id", newProject.getId()));
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity findProjectsByUsername(@PathVariable("username") String username) {
-        Optional<List<Project>> projects = projectService.findProjectsByUsername(username);
+    @GetMapping("")
+    public ResponseEntity findProjectsByUsername(Principal principal) {
+        Optional<List<Project>> projects = projectService.findProjectsByUsername(principal.getName());
         
         if(projects.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", 200, "projects", Collections.<String>emptyList()));

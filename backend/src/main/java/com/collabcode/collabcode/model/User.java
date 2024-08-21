@@ -29,7 +29,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name="users")
+@Table(name="users", uniqueConstraints = {@UniqueConstraint(name = "Unique user and login method", columnNames = {"username", "accountType"})})
 public class User {
 
     @Id
@@ -37,16 +37,17 @@ public class User {
     @Column(name="id")
     private Integer id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     @Size(min = 5, message = "username must be longer than 5 characters")
     @Size(max = 30, message = "username must be shorter than 30 characters")
     @NotNull(message = "username cannot be empty")
     private String username;
 
     @Column(name="password")
-    @Size(min = 5, message = "password must be longer than 5 characters")
-    @NotNull(message = "password cannot be empty")
     private String password;
+
+    @NotNull(message = "user must have account type")
+    private String accountType;
 
     @ManyToMany
     @JoinTable(name = "user_to_projects", 
@@ -66,6 +67,12 @@ public class User {
         this.password = password;
     }
 
+    public User(String username, String password, String accountType) {
+        this.username = username;
+        this.password = password;
+        this.accountType = accountType;
+    }
+
     public User() {
 
     }
@@ -74,7 +81,11 @@ public class User {
         this.id = id;
     }
 
-    public void setUserName(String username) {
+    public void setAccountType(String type) {
+        this.accountType = type;
+    }
+
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -97,6 +108,10 @@ public class User {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getAccountType() {
+        return this.accountType;
     }
 
     public String getPassword() {

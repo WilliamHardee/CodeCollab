@@ -31,7 +31,9 @@ public class LoadDatabase implements CommandLineRunner{
             return; 
         }
         User testUser1U = new User("JohnDoe", "123456789");
+        testUser1U.setAccountType("LOCAL");
         User testUser2U = new User("JohnDoe2", "987654321");
+        testUser2U.setAccountType("LOCAL");
     
         Project testProject1 = projectService.create("test1", "print(hi)", "Python");
         Project testProject2 = projectService.create("test2", "print(bye)", "Python");

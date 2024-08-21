@@ -12,21 +12,20 @@ public class CreateProjectDTO {
     @NotBlank(message = "Language is required")
     private String language;
 
-    @NotBlank(message = "Username is required")
-    private String username;
+
 
     public CreateProjectDTO(String projectName, String projectData, String language, String username) {
         this.projectName = projectName;
         this.projectData = projectData;
         this.language = language;
-        this.username = username;
+
     }
 
 
     public String getProjectName() { return projectName; }
     public String getProjectData() { return projectData; }
     public String getLanguage() { return language; }
-    public String getUsername() { return username; }
+
 
     @Override
     public String toString() {
@@ -34,7 +33,6 @@ public class CreateProjectDTO {
                 "projectName='" + projectName + '\'' +
                 ", projectData='" + projectData + '\'' +
                 ", language='" + language + '\'' +
-                ", username='" + username + '\'' +
                 '}';
     }
 }

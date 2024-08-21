@@ -1,5 +1,6 @@
 package com.collabcode.collabcode.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,7 @@ import com.collabcode.collabcode.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+import com.collabcode.collabcode.DTO.CreateLoginDTO;
 import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
 import com.collabcode.collabcode.exceptions.ProjectDoesNotExist;
 import com.collabcode.collabcode.exceptions.UserDoesNotExist;
@@ -57,9 +59,11 @@ public class UserController {
         this.projectService = projectService;
     }
 
+
+
     @GetMapping("")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.getAllUsers());
+    public ResponseEntity getAllUsers(Principal principal) {
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("username", principal.getName()));
     }
 
     @PostMapping("/logout")
@@ -77,7 +81,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody User user, HttpServletResponse response) throws InvalidLoginCredentials {
+    public ResponseEntity login(@Valid @RequestBody CreateLoginDTO user, HttpServletResponse response) throws InvalidLoginCredentials {
         String jwt = userService.login(user);
         ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
             .httpOnly(true)  
@@ -92,11 +96,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity createUser(@Valid @RequestBody User User) throws Exception {
-        if(userService.getUserByUsername(User.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistsException("Username already exists");
-        }
-        userService.create(User);
+    public ResponseEntity createUser(@Valid @RequestBody CreateLoginDTO user) throws Exception {
+        userService.create(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201));
     }
 

@@ -67,7 +67,6 @@ function formReducer(state, action) {
                 ...state,
                 ...Object.keys(authFormInitialState).reduce((acc, key) => {
                     if (!(key in baseFormState)) {
-                        console.log(key)
                         acc[key] = authFormInitialState[key];
                     }
                     return acc;
@@ -79,6 +78,10 @@ function formReducer(state, action) {
                 errorMsg: "",
                 error: false
                 
+            }
+        case "FORM_RESET":
+            return {
+                ...action.payload
             }
         default:
             return state;

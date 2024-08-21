@@ -3,6 +3,7 @@ package com.collabcode.collabcode.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,6 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+//import com.collabcode.collabcode.Helpers.CustomOAuth2AuthProvider;
+import com.collabcode.collabcode.Helpers.CustomOAuth2SuccessHandler;
+import com.collabcode.collabcode.repository.UserRepository;
+import com.collabcode.collabcode.service.CustomOAuth2UserService;
 import com.collabcode.collabcode.service.UserDetailsServiceImpl;
 
 @Configuration
@@ -25,6 +30,16 @@ public class SecurityConfig {
 
     @Autowired
     JwtAuthFilter jwtAuthFilter;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+
+    @Autowired
+    private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+
+    //@Autowired
+    //private CustomOAuth2AuthProvider customOAuth2AuthProvider;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -37,8 +52,13 @@ public class SecurityConfig {
                 .headers().frameOptions().disable().and()
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/login", "/user/create", "/h2-console/**").permitAll()
+                        .requestMatchers("/user/login", "/user/create", "/h2-console/**", "/logout").permitAll()
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("http://localhost:5173/projectList", true)
+                        .failureUrl("http://localhost:5173/")
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
+                        .successHandler(customOAuth2SuccessHandler))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
@@ -50,6 +70,8 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+  
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

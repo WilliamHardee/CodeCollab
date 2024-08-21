@@ -28,15 +28,28 @@ function ProjectList() {
     [projects.length]
   );
 
+  async function fetchUsername() {
+    try {
+      const response = await fetch("http://localhost:8443/user", {credentials: "include"})
+      if(response.status != 200) {
+        console.log(response.status)
+        navigate("/")
+        return
+      }
+      const jsonRes = await response.json()
+      session.setSession("username", jsonRes.username)
+    }
+    catch (e) {
+      console.error("An unexpected error occured", e)
+    }
+  }
+
 
 
   function getProjects() {
     const username = session.getSession("username");
-    if (!username) {
-      navigate("/");
-    }
 
-    fetch(`http://localhost:8443/project/${username}`, {
+    fetch(`http://localhost:8443/project`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -49,6 +62,7 @@ function ProjectList() {
   
   useEffect(() => {
     getProjects();
+    fetchUsername();
   }, []);
 
   useEffect(() => {

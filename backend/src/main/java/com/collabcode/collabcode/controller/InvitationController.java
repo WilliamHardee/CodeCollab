@@ -1,5 +1,6 @@
 package com.collabcode.collabcode.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.collabcode.collabcode.DTO.AcceptInvitationDTO;
 import com.collabcode.collabcode.DTO.InviteListResponseDTO;
 import com.collabcode.collabcode.DTO.UpdateInvitationDTO;
 import com.collabcode.collabcode.model.Invitations;
@@ -40,32 +40,32 @@ public class InvitationController {
     ProjectService projectService;
 
     @PostMapping("/create")
-    public ResponseEntity createInvitation(@Valid @RequestBody UpdateInvitationDTO createInvitationDTO) throws Exception {
-        invitationsService.addInvitation(createInvitationDTO.getInvited_username(), 
+    public ResponseEntity createInvitation(@Valid @RequestBody UpdateInvitationDTO createInvitationDTO, Principal principal) throws Exception {
+        invitationsService.addInvitation(createInvitationDTO.getUsername(), 
                                         createInvitationDTO.getProject_id(),
-                                        createInvitationDTO.getInviter_username());
+                                        principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity deleteInvitation(@Valid @RequestBody  UpdateInvitationDTO deleteInvitationDTO) throws Exception {
-        invitationsService.deleteInvitation(deleteInvitationDTO.getInviter_username(), deleteInvitationDTO.getProject_id(), deleteInvitationDTO.getInvited_username());
+    public ResponseEntity deleteInvitation(@Valid @RequestBody  UpdateInvitationDTO deleteInvitationDTO, Principal principal) throws Exception {
+        invitationsService.deleteInvitation(deleteInvitationDTO.getUsername(), deleteInvitationDTO.getProject_id(), principal.getName());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Map.of("status", 204));
     }
 
-    @PostMapping("/accept")
-    public ResponseEntity acceptInvitation(@Valid @RequestBody AcceptInvitationDTO acceptInvitationDTO) throws Exception {
-        invitationsService.acceptInvitation(acceptInvitationDTO.getUsername(), acceptInvitationDTO.getProjectID());
+    @PostMapping("/accept/{project_id}")
+    public ResponseEntity acceptInvitation(@PathVariable("project_id") UUID project_id, Principal principal) throws Exception {
+        invitationsService.acceptInvitation(principal.getName(), project_id);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("status", 201));
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity getByUsername(@PathVariable("username") String username)  throws Exception{
-        List<Invitations> inviteList = invitationsService.getInvitations(username);
+    @GetMapping("")
+    public ResponseEntity getByUsername(Principal principal)  throws Exception{
+        List<Invitations> inviteList = invitationsService.getInvitations(principal.getName());
         List<InviteListResponseDTO> res = new ArrayList<>();
         for(Invitations invite : inviteList) {
             InviteListResponseDTO resDTO = new InviteListResponseDTO();
-            resDTO.setInvited_username(username);
+            resDTO.setInvited_username(principal.getName());
             resDTO.setInviter_username(invite.getInviter_username());
             resDTO.setProject_id(invite.getProject_id());
             resDTO.setProject_name(projectService.getById(invite.getProject_id()).getProjectName());
