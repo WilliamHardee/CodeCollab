@@ -33,3 +33,5 @@ build/
 .vscode/
 application-secret.properties
 .env
+
+localhost.p12
