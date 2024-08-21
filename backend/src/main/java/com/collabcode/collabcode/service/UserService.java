@@ -15,7 +15,7 @@ import com.collabcode.collabcode.exceptions.InvalidLoginCredentials;
 import com.collabcode.collabcode.exceptions.UsernameAlreadyExistsException;
 import com.collabcode.collabcode.model.Project;
 import com.collabcode.collabcode.model.User;
-import com.collabcode.collabcode.repository.ProjectRepository;
+
 import com.collabcode.collabcode.repository.UserRepository;
 
 import jakarta.transaction.Transactional;

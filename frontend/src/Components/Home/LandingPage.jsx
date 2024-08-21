@@ -12,10 +12,25 @@ import { authFormInitialState, formReducer } from "../Global/formReducer";
 
 
 function LandingPage() {
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(formReducer, authFormInitialState)
   const [form, setForm] = useState("login");
 
   useEffect(() => {dispatch({type: "FORM_RESET", payload: authFormInitialState})}, [form])
+  useEffect(() => {fetchUsername()}, [])
+
+  async function fetchUsername() {
+    try {
+      const response = await fetch("http://localhost:8443/user", {credentials: "include"})
+      if(response.status == 200) {
+        navigate("/projectList")
+        return
+      }
+    }
+    catch (e) {
+      return
+    }
+  }
 
   return (
     <div className={style.container}>

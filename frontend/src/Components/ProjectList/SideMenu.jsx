@@ -6,14 +6,20 @@ import { useNavigate } from "react-router";
 function SideMenu({ setModal }) {
   const [invitations, setInvitations] = useState(null);
   const navigate = useNavigate();
-  function logout() {
+  async function logout() {
+
     sessionStorage.clear();
-    fetch("http://localhost:8443/user/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    navigate("/");
+    try {
+      await fetch("http://localhost:8443/user/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    }
+    catch (e) {console.error("Unexpected logout error", e)}
+    finally {navigate("/");}
+    
   }
+
   async function getInvites() {
     try {
       const response = await fetch(
@@ -106,7 +112,7 @@ function SideMenu({ setModal }) {
         </div>
       </div>
       <div className={style.logout}>
-        <Button text="Logout" clickable={true} onClick={logout} />
+        <Button text="Sign Out" clickable={true} onClick={logout} />
       </div>
     </div>
   );

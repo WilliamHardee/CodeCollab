@@ -83,7 +83,7 @@ function CreateAccount({ state, dispatch, setForm }) {
           <input
             onChange={(e) => handleTextChange(e)}
             className={style.input}
-            type="password"
+            type="text"
             id="password"
             name="password"
             placeholder="password"
