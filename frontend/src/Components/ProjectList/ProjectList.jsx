@@ -41,6 +41,7 @@ function ProjectList() {
     }
     catch (e) {
       console.error("An unexpected error occured", e)
+      navigate("/")
     }
   }
 
